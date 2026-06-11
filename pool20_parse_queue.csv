@@ -1,0 +1,13 @@
+company_name,stock_code,doc_id,local_pdf_path,parse_status
+陆家嘴,600663,1222823303,data/pdf/陆家嘴_2023_1222823303.pdf,mineru_submitted_pending_batch_efcfd0d1
+上海临港,600848,1219596576,data/pdf/上海临港_2023_1219596576.pdf,pending_mineru
+张江高科,600895,1219463872,data/pdf/张江高科_2023_1219463872.pdf,pending_mineru
+外高桥,600648,1219840458,data/pdf/外高桥_2023_1219840458.pdf,pending_mineru
+城建发展,600266,1219595758,data/pdf/城建发展_2023_1219595758.pdf,mineru_submitted_pending_batch_efcfd0d1
+信达地产,600657,1219412328,data/pdf/信达地产_2023_1219412328.pdf,pending_mineru
+栖霞建设,600533,1219915446,data/pdf/栖霞建设_2023_1219915446.pdf,pending_mineru
+苏州高新,600736,1219876783,data/pdf/苏州高新_2023_1219876783.pdf,pending_mineru
+京投发展,600683,1219493208,data/pdf/京投发展_2023_1219493208.pdf,mineru_submitted_pending_batch_efcfd0d1
+南山控股,002314,1219468516,data/pdf/南山控股_2023_1219468516.pdf,pending_mineru
+城投控股,600649,1219469544,data/pdf/城投控股_2023_1219469544.pdf,mineru_submitted_pending_batch_efcfd0d1
+荣盛发展,002146,1219865459,data/pdf/荣盛发展_2023_1219865459.pdf,pending_mineru

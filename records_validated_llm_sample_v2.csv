@@ -1,0 +1,3 @@
+﻿doc_id,stock_code,stock_name,report_year,has_cash_dividend,cash_dividend_per_10_shares,parent_net_profit,operating_cash_flow,liquidity_risk_label,risk_keywords,consistency_score,consistency_reason
+1219487237,000002,万科A,2023,False,,12162684368.86,3912323920.11,medium,信用评级下调;市场信心动荡;恐慌情绪;债券价格下跌,3,公司不分红，且面临信用评级下调、市场信心动荡等流动性风险，经营现金流相对净利润较低，一致。
+1219740785,600048,保利发展,2023,True,4.1,1206715.68,1393000.75,,,2,现金分红较高，经营现金流良好且同比增长，未发现明显不一致，但需人工复核。

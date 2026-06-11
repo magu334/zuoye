@@ -1,0 +1,4 @@
+﻿doc_id,stock_code,stock_name,report_year,has_cash_dividend,cash_dividend_per_10_shares,parent_net_profit,operating_cash_flow,liquidity_risk_label,risk_keywords,consistency_score,consistency_reason
+1219487237,000002,万科A,2023,False,,12162684368.86,3912323920.11,medium,资金存量;现金短债比;下行,3,公司不分红，且披露资金存量、现金短债比下行，流动性压力较强，一致。
+1219740785,600048,保利发展,2023,True,4.1,1206715.68,1393000.75,unknown,,2,现金分红每10股4.10元，经营现金流为正且增长，未发现明显不一致，需人工复核。
+1219330022,001979,招商蛇口,2023,True,3.2,6319420453.25,31430984938.66,unknown,,2,现金分红较高，但经营现金流强劲且无流动性风险披露，未发现不一致
