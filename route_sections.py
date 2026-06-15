@@ -151,6 +151,7 @@ def run(config: dict, limit: int | None = None) -> int:
                         "doc_id": doc["doc_id"],
                         "stock_code": doc["stock_code"],
                         "stock_name": doc["stock_name"],
+                        "report_year": doc.get("report_year", ""),
                         "title": doc["title"],
                         "section_type": section_type,
                         "quality_issue": quality,

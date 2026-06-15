@@ -1,0 +1,7 @@
+provider: "siliconflow"
+model: "Qwen/Qwen3-8B"
+base_url_env: "LLM_BASE_URL"
+api_key_env: "LLM_API_KEY"
+temperature: 0
+max_tokens: 1024
+timeout_seconds: 60

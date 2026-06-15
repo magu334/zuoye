@@ -2,44 +2,85 @@
 
 ## 3-Minute Demo Flow
 
-1. Show the research question:
-   - 房地产上市公司年报分红政策、经营现金流与流动性风险是否一致。
+### 1. Research Question
+Show the project title:
 
-2. Show data provenance:
-   - Open `data/metadata/metadata.csv`.
-   - Point to `doc_id`, `cninfo_url`, `pdf_url`, and `local_pdf_path`.
+`房地产上市公司年报分红政策、经营现金流与流动性风险一致性分析`
 
-3. Show one PDF and parsed markdown:
-   - Open one file under `data/pdf/`.
-   - Open the matching file under `data/parsed/markdown/`.
+Explain in one sentence:
 
-4. Run the workflow:
+We use CNINFO annual reports to check whether real-estate companies' dividend decisions are consistent with operating cash flow, profitability pressure, and liquidity-risk disclosure.
 
-```bash
-python src/pipeline_run.py --config configs/workflow.yaml --step all --limit 3
-```
+### 2. Data Provenance
+Open `data/metadata/metadata.csv`.
 
-For the full parsed sample:
+Point to:
+- `doc_id`
+- `stock_code`
+- `stock_name`
+- `title`
+- `cninfo_url`
+- `pdf_url`
+- `local_pdf_path`
 
-```bash
-python src/pipeline_run.py --config configs/workflow_parsed37.yaml --step all
-```
+Say: `doc_id` is the primary key across metadata, PDF, MinerU markdown, routed sections, extraction results, validation, and evaluation.
 
-5. Show intermediate evidence:
-   - `data/parsed/parsed_docs.jsonl`
-   - `data/parsed/sections.jsonl`
-   - `outputs/reports/section_check_report.csv`
+### 3. PDF To Parsed Text
+Open one sample PDF under `data/pdf/`.
 
-6. Show structured results:
-   - `outputs/results/extract_results.jsonl`
-   - `outputs/results/records_validated.csv`
+Then open the matching MinerU markdown under `data/parsed/markdown/`.
 
-7. Show evaluation and known failure:
-   - Explain one likely section or normalization error.
-   - Show `eval_report_final.md` and `optimization_log.md`.
+Say: the project does not extract directly from a spreadsheet; it first parses real CNINFO PDF annual reports into markdown and unified JSONL.
 
-## Backup Demo Command
+### 4. Workflow Command
+Show the full workflow command:
 
 ```bash
-python src/pipeline_run.py --config configs/workflow.yaml --step validate
+python pipeline_run.py --config configs/workflow_parsed81.yaml --step all
 ```
+
+Expected result:
+
+```text
+[parse] parsed docs=81
+[parse_check] checked docs=81
+[route] sections=243
+[extract] extract records=81
+[validate] valid=81, errors=0
+```
+
+### 5. Intermediate Evidence
+Open:
+- `data/parsed/parsed_docs.jsonl`
+- `data/parsed/sections.jsonl`
+- `outputs/reports/section_check_report.csv`
+
+Explain the difference:
+- Routing means the program finds candidate sections.
+- Checking means humans inspect whether those sections are actually correct.
+
+### 6. Structured Results
+Open:
+- `outputs/results/final_results.csv`
+- `outputs/analysis/flagged_review_list.csv`
+
+Explain one result row:
+- Whether the company paid cash dividends.
+- Operating cash flow sign.
+- Liquidity-risk label.
+- Consistency score.
+- Why it is or is not flagged for review.
+
+### 7. Evaluation And Failure Case
+Open:
+- `outputs/evaluation/human_eval_template_81.csv`
+- `outputs/reports/eval_report_final.md`
+
+Say:
+
+The earlier manual audit showed that financial numeric fields are more stable, while liquidity-risk evidence routing is the main error source. Therefore, the final output is used as an analyst screening list, not as unchecked truth.
+
+### 8. Closing
+Final sentence:
+
+This project demonstrates a complete evidence chain from CNINFO PDF to MinerU markdown, routed sections, structured extraction, Pydantic validation, human evaluation, and a reusable review list.

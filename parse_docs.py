@@ -30,6 +30,7 @@ def run(config: dict, limit: int | None = None) -> int:
                     "doc_id": doc_id,
                     "stock_code": row["stock_code"],
                     "stock_name": row["company_name"],
+                    "report_year": row.get("report_year", ""),
                     "title": row["announcement_title"],
                     "pdf_path": row["local_pdf_path"],
                     "markdown_path": str(Path(config["paths"]["markdown_dir"]) / md_path.name).replace("\\", "/"),

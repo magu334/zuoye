@@ -1,20 +1,44 @@
 # Real Estate Dividend, Cash Flow, and Liquidity Risk Project
 
-## Project Goal
-This project analyzes whether A-share real-estate listed companies' dividend policies are consistent with operating cash flow and liquidity-risk disclosure in annual reports.
+## Project Title
+房地产上市公司年报分红政策、经营现金流与流动性风险一致性分析
 
-## Data Source
-The main data source is public annual-report announcements from CNINFO. Each document is tracked by `doc_id`, announcement URL, PDF URL, and local PDF path.
+## Financial Question
+This project asks whether A-share real-estate listed companies' dividend decisions are consistent with their operating cash flow, profitability pressure, and liquidity-risk disclosure in annual reports.
+
+The practical output is an analyst review ledger. It does not directly produce investment advice; instead, it flags companies that deserve manual review, such as firms paying cash dividends while operating cash flow or net profit is negative, or while liquidity-risk disclosure is high.
+
+## Data Source And Scope
+- Source: public CNINFO annual-report announcements.
+- Announcement type: annual reports.
+- Industry scope: A-share real-estate listed companies.
+- Current final sample: 81 annual reports.
+- Year coverage: 2021-2023.
+- Year distribution: 2021 = 10, 2022 = 34, 2023 = 37.
+- Main metadata file: `data/metadata/metadata.csv`.
+- Original PDFs are kept under `data/pdf/`.
+- MinerU markdown outputs are kept under `data/parsed/markdown/`.
+
+Each document is tracked by `doc_id`, stock code, stock name, announcement title, CNINFO URL, PDF URL, local PDF path, and parsed markdown path.
+
+## Difficulty
+Requested difficulty: standard track, coefficient 1.0.
+
+Reason: the project uses 81 annual-report PDFs, 6 evaluated core fields, section routing/checking, evidence tracing, Pydantic validation, workflow logs, and human evaluation. It is a single complex announcement type rather than a simple field-extraction task.
 
 ## Directory Structure
-- `configs/`: workflow and section-routing configuration.
-- `data/metadata/`: metadata CSV files.
+- `configs/`: workflow, model, crawl, and section-routing configuration.
+- `data/metadata/`: CNINFO metadata CSV files.
 - `data/pdf/`: downloaded CNINFO PDF files.
-- `data/parsed/`: MinerU markdown, parsed documents, and routed sections.
-- `src/`: workflow, parsing, routing, extraction, validation, and reporting scripts.
-- `outputs/`: logs, reports, results, and proposal materials.
-- `prompts/`: extraction prompt templates.
-- `work/`: temporary working files for MinerU batching and PDF splitting.
+- `data/parsed/`: parsed documents, markdown files, and routed sections.
+- `prompts/`: prompt templates.
+- `src/`: parsing, routing, extraction, validation, reporting, and workflow scripts.
+- `outputs/logs/`: run logs and validation errors.
+- `outputs/results/`: extraction and validated result files.
+- `outputs/reports/`: dataset, section, evaluation, and analysis reports.
+- `outputs/evaluation/`: human evaluation templates and audit records.
+- `outputs/analysis/`: result analysis tables.
+- `work/`: local temporary working files. Do not treat this as final submission material.
 
 ## Setup
 ```bash
@@ -23,33 +47,86 @@ python -m pip install -r requirements.txt
 
 Create a local `.env` from `.env.example` and fill real keys locally only. Do not commit `.env`.
 
-## Minimal Run
+## Minimal Check
+If `python` is available in your current environment:
+
 ```bash
-python src/pipeline_run.py --config configs/workflow.yaml --step all --limit 3
+python pipeline_run.py --help
 ```
 
-## Full Current Sample Run
+Full current workflow:
+
 ```bash
-python src/pipeline_run.py --config configs/workflow_parsed37.yaml --step all
+python pipeline_run.py --config configs/workflow_parsed81.yaml --step all
 ```
 
-## Dataset Status
-- PDF pool: 37 CNINFO 2023 annual-report PDFs have been downloaded and tracked in `data/metadata/metadata_2023_pdf37.csv`.
-- Executable parsed sample: all 37 reports currently have MinerU Markdown and can run through the full workflow.
-- Pending parse sample: 0.
-- Current difficulty positioning: the 37 parsed PDFs satisfy the basic-difficulty data-volume band. The workflow, field design, section checking, evidence handling, and evaluation plan remain the current standard-track prototype. A full standard-track data-volume claim would require expanding parsed PDFs toward 80+ reports or adding multi-year/multi-document matching.
+If Windows cannot find `python`, activate the Anaconda environment first and then run the same commands.
 
-## Outputs
-- `outputs/logs/run_log.jsonl`: workflow logs.
-- `data/parsed/parsed_docs.jsonl`: unified parsed-document input.
-- `data/parsed/sections.jsonl`: routed target sections.
-- `outputs/results/extract_results.jsonl`: structured extraction results.
-- `outputs/results/records_validated.csv`: validated CSV output.
-- `outputs/reports/summary_report.md`: summary report.
-- `outputs/evaluation/human_eval_template.csv`: manual evaluation template for the 37 parsed reports.
+## Workflow
+```text
+metadata
+  -> audit
+  -> parse
+  -> parse_check
+  -> route
+  -> extract
+  -> validate
+  -> report
+```
 
-## Current Status
-- 37 CNINFO 2023 annual-report PDFs downloaded.
-- 37 reports have MinerU markdown and can run through the workflow.
-- Latest run: 37 parsed docs, 111 routed sections, 37 extracted records, 37 valid records, 0 validation errors.
-- Manual evaluation labels still need to be completed for Week 15.
+Latest full run:
+
+```text
+[parse] parsed docs=81
+[parse_check] checked docs=81
+[route] sections=243
+[extract] extract records=81
+[validate] valid=81, errors=0
+```
+
+## Core Fields
+- `has_cash_dividend`
+- `cash_dividend_per_10_shares`
+- `parent_net_profit`
+- `operating_cash_flow`
+- `liquidity_risk_label`
+- `consistency_score`
+
+Key fields are accompanied by evidence where available. Pydantic schema is defined in `src/schemas.py`.
+
+## Main Outputs
+- `outputs/results/final_results.csv`: final validated CSV output.
+- `outputs/results/extract_results.jsonl`: structured extraction JSONL.
+- `outputs/logs/sample_run_log.jsonl`: sample workflow log.
+- `outputs/reports/eval_report_final.md`: final evaluation report.
+- `outputs/reports/analysis_results_parsed81.md`: result analysis.
+- `outputs/analysis/flagged_review_list.csv`: priority manual-review list.
+- `outputs/evaluation/human_eval_template_81.csv`: human evaluation table for 81 reports.
+
+## Evaluation Summary
+The 81-report workflow produced 81 valid records and 0 Pydantic validation errors.
+
+Current result analysis:
+- Cash dividend records: 54.
+- No-cash-dividend records: 18.
+- Dividend field missing records: 9.
+- Negative operating cash flow records: 26.
+- Negative parent net profit records: 17.
+- Cash dividend with negative operating cash flow: 19.
+- High liquidity-risk label records: 13.
+- Medium liquidity-risk label records: 38.
+- Flagged review records: 30.
+
+Earlier human audit on the 37-report stage found that financial field values were more stable than liquidity-risk evidence routing. The main error source was section routing for risk evidence.
+
+## Main Limitations
+- Financial amount units are not fully normalized, so cross-company amount ranking should not be made directly from raw numeric columns.
+- Liquidity-risk labels are screening labels and require manual evidence review.
+- Some evidence page numbers are approximate because parsed markdown page markers are not always stable.
+- The baseline extraction is rule-based; LLM extraction was tested separately but is not treated as the only source of truth.
+
+## Secret And Compliance Rules
+- Main data comes from public CNINFO announcements.
+- The project does not bypass login, captcha, or access restrictions.
+- Real API keys must stay only in local `.env`.
+- `.env.example` contains placeholders only.
