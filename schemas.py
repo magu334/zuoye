@@ -44,3 +44,45 @@ class DividendCashflowLiquidityExtract(BaseModel):
     liquidity_risk: Optional[LiquidityRisk] = None
     consistency_score: Optional[int] = Field(default=None, ge=1, le=3)
     consistency_reason: Optional[str] = None
+
+
+class QuantitativeScoredRecord(BaseModel):
+    doc_id: str
+    stock_code: str
+    stock_name: str
+    report_year: Literal["2021", "2022", "2023"]
+    has_cash_dividend: Optional[bool] = None
+    cash_dividend_per_10_shares: Optional[float] = None
+    parent_net_profit_cny: Optional[float] = None
+    operating_cash_flow_cny: Optional[float] = None
+    ocf_to_profit_ratio: Optional[float] = None
+    dividend_pressure_score: float = Field(..., ge=0, le=100)
+    profit_pressure_score: float = Field(..., ge=0, le=100)
+    cashflow_pressure_score: float = Field(..., ge=0, le=100)
+    liquidity_term_hits: int = Field(..., ge=0)
+    liquidity_weighted_hits: float = Field(..., ge=0)
+    liquidity_risk_score: float = Field(..., ge=0, le=100)
+    liquidity_risk_quantile: Literal["none", "low", "medium", "high"]
+    legacy_liquidity_risk_label: Literal["none", "low", "medium", "high", "unknown"]
+    attention_score: float = Field(..., ge=0, le=100)
+    attention_level: Literal["routine", "monitor", "watch", "priority"]
+    review_reason: str
+
+
+class CrossYearMatchingEvent(BaseModel):
+    event_id: str
+    stock_code: str
+    stock_name: str
+    from_year: Literal["2021", "2022"]
+    to_year: Literal["2022", "2023"]
+    year_gap: int = Field(..., ge=1, le=2)
+    is_consecutive_pair: bool
+    from_doc_id: str
+    to_doc_id: str
+    dividend_delta: Optional[float] = None
+    ocf_delta_cny: Optional[float] = None
+    profit_delta_cny: Optional[float] = None
+    risk_score_delta: float
+    attention_score_delta: float
+    event_type: str
+    review_reason: str

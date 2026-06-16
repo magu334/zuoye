@@ -1,0 +1,19 @@
+project_name: "real_estate_dividend_cashflow_liquidity"
+source: "CNINFO public announcements"
+announcement_type: "annual_report"
+industry_scope: "A-share real-estate listed companies"
+year_range:
+  - "2020"
+  - "2021"
+  - "2022"
+  - "2023"
+  - "2024"
+target_records: 175
+metadata_output: "data/metadata/metadata.csv"
+pdf_dir: "data/pdf"
+rate_limit:
+  sleep_seconds: 1
+compliance:
+  no_login_bypass: true
+  no_captcha_bypass: true
+  public_data_only: true

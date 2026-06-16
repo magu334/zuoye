@@ -12,19 +12,21 @@ The practical output is an analyst review ledger. It does not directly produce i
 - Source: public CNINFO annual-report announcements.
 - Announcement type: annual reports.
 - Industry scope: A-share real-estate listed companies.
-- Current final sample: 81 annual reports.
-- Year coverage: 2021-2023.
-- Year distribution: 2021 = 10, 2022 = 34, 2023 = 37.
-- Main metadata file: `data/metadata/metadata.csv`.
-- Original PDFs are kept under `data/pdf/`.
-- MinerU markdown outputs are kept under `data/parsed/markdown/`.
+- Downloaded PDF pool: 175 annual reports.
+- Structured parsed/scored sample: 81 annual reports.
+- PDF year coverage: 2020-2024.
+- Parsed/scored year coverage: 2021-2023.
+- Expanded metadata file: `metadata_2020_2024_pool150.csv`.
+- Existing parsed metadata/result files remain available for the 81-record structured workflow.
+- Some course-template paths still use `data/metadata/`, `data/pdf/`, and `data/parsed/`; the runner has a fallback layer so current flat files can still be used.
+- The final reproducible 81-record checks use the saved extraction and normalized result artifacts.
 
 Each document is tracked by `doc_id`, stock code, stock name, announcement title, CNINFO URL, PDF URL, local PDF path, and parsed markdown path.
 
 ## Difficulty
-Requested difficulty: standard track, coefficient 1.0.
+Requested difficulty: challenge track, coefficient 1.1.
 
-Reason: the project uses 81 annual-report PDFs, 6 evaluated core fields, section routing/checking, evidence tracing, Pydantic validation, workflow logs, and human evaluation. It is a single complex announcement type rather than a simple field-extraction task.
+Reason: the project now has a 175-PDF CNINFO annual-report pool, exceeding the 150+ PDF challenge-track threshold. The current structured workflow additionally treats the parsed 81 annual reports as a cross-year matching dataset: 34 companies have at least two years of parsed/scored records, producing 54 same-company cross-year matching events. The project also adds timeline comparison, weighted scoring, and a priority review list.
 
 ## Directory Structure
 - `configs/`: workflow, model, crawl, and section-routing configuration.
@@ -54,13 +56,13 @@ If `python` is available in your current environment:
 python pipeline_run.py --help
 ```
 
-Full current workflow:
+Current artifact workflow:
 
 ```bash
 python pipeline_run.py --config configs/workflow_parsed81.yaml --step all
 ```
 
-If Windows cannot find `python`, activate the Anaconda environment first and then run the same commands.
+For the current flat repository layout, `--step all` runs enabled reproducible steps only: validate, report, and quantitative analysis for the existing 81 structured records. Expanding the structured workflow from 81 to the full 175-PDF pool requires sending the newly downloaded PDFs through MinerU and then rerunning parse/route/extract.
 
 ## Workflow
 ```text
@@ -74,14 +76,14 @@ metadata
   -> report
 ```
 
-Latest full run:
+Latest artifact run:
 
 ```text
-[parse] parsed docs=81
-[parse_check] checked docs=81
-[route] sections=243
-[extract] extract records=81
 [validate] valid=81, errors=0
+[report] summary report=outputs/reports/summary_report.md
+[analysis] scored_records=81
+[analysis] flagged_records=4
+[analysis] cross_year_events=54
 ```
 
 ## Core Fields
@@ -89,39 +91,56 @@ Latest full run:
 - `cash_dividend_per_10_shares`
 - `parent_net_profit`
 - `operating_cash_flow`
-- `liquidity_risk_label`
-- `consistency_score`
+- `liquidity_risk_label` legacy screening label
+- `consistency_score` legacy 1-3 screening score
+- `parent_net_profit_cny`
+- `operating_cash_flow_cny`
+- `ocf_to_profit_ratio`
+- `dividend_pressure_score`
+- `profit_pressure_score`
+- `cashflow_pressure_score`
+- `liquidity_risk_score`
+- `liquidity_risk_quantile`
+- `attention_score`
+- `attention_level`
 
 Key fields are accompanied by evidence where available. Pydantic schema is defined in `src/schemas.py`.
 
 ## Main Outputs
-- `outputs/results/final_results.csv`: final validated CSV output.
-- `outputs/results/extract_results.jsonl`: structured extraction JSONL.
+- `records_validated.csv` and `outputs/results/records_validated.csv`: validated CSV output.
+- `extract_results.jsonl`: structured extraction JSONL.
+- `outputs/results/quantitative_scored_records.csv`: 81 records with comparable risk and attention scores.
 - `outputs/logs/sample_run_log.jsonl`: sample workflow log.
 - `outputs/reports/eval_report_final.md`: final evaluation report.
+- `outputs/reports/quantitative_attention_report.md`: quantitative scoring and cross-year matching report.
 - `outputs/reports/analysis_results_parsed81.md`: result analysis.
-- `outputs/analysis/flagged_review_list.csv`: priority manual-review list.
+- `outputs/analysis/attention_review_list.csv`: priority manual-review list sorted by weighted attention score.
+- `outputs/analysis/cross_year_matching_events.csv`: 54 same-company cross-year matching events.
 - `outputs/evaluation/human_eval_template_81.csv`: human evaluation table for 81 reports.
 
 ## Evaluation Summary
 The 81-report workflow produced 81 valid records and 0 Pydantic validation errors.
 
 Current result analysis:
+- Downloaded PDF pool: 175.
+- PDF year distribution: 2020 = 33, 2021 = 35, 2022 = 35, 2023 = 37, 2024 = 35.
 - Cash dividend records: 54.
 - No-cash-dividend records: 18.
 - Dividend field missing records: 9.
 - Negative operating cash flow records: 26.
 - Negative parent net profit records: 17.
 - Cash dividend with negative operating cash flow: 19.
-- High liquidity-risk label records: 13.
-- Medium liquidity-risk label records: 38.
-- Flagged review records: 30.
+- Quantitative liquidity-risk quantiles: high 17, medium 28, low 35, none 1.
+- Weighted attention levels: watch 4, monitor 28, routine 49.
+- Cross-year matching events: 54 total same-company year pairs, including 44 consecutive year pairs.
+
+`liquidity_risk_label` and `consistency_score` are retained for backward compatibility. The final comparison uses `liquidity_risk_score`, `liquidity_risk_quantile`, `attention_score`, and `attention_level`, all generated by `quantitative_attention_analysis.py`.
 
 Earlier human audit on the 37-report stage found that financial field values were more stable than liquidity-risk evidence routing. The main error source was section routing for risk evidence.
 
 ## Main Limitations
-- Financial amount units are not fully normalized, so cross-company amount ranking should not be made directly from raw numeric columns.
-- Liquidity-risk labels are screening labels and require manual evidence review.
+- 175 PDFs have been downloaded, but the structure-scored workflow currently covers 81 parsed reports. The remaining PDFs need MinerU parsing before field extraction.
+- Liquidity-risk scores are screening scores and require manual evidence review.
 - Some evidence page numbers are approximate because parsed markdown page markers are not always stable.
 - The baseline extraction is rule-based; LLM extraction was tested separately but is not treated as the only source of truth.
 

@@ -8,7 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from src.workflow.common import Timer, append_log, project_path
+from src.workflow.common import Timer, append_log, project_path, resolve_existing
 
 
 RULES = {
@@ -132,7 +132,7 @@ def find_section(text: str, section_type: str) -> tuple[str, str, str]:
 
 def run(config: dict, limit: int | None = None) -> int:
     with Timer() as timer:
-        parsed_path = project_path(config["paths"]["parsed_docs"])
+        parsed_path = resolve_existing(config["paths"]["parsed_docs"])
         records = [json.loads(line) for line in parsed_path.read_text(encoding="utf-8").splitlines() if line.strip()]
         if limit:
             records = records[:limit]

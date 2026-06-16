@@ -4,13 +4,15 @@ import argparse
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from src import audit_dataset, extract_fields, parse_check, parse_docs, report_results, route_sections, validate_results
 from src.workflow.common import append_log, load_workflow_config
 
+import quantitative_attention_analysis
 
-STEPS = ["audit", "parse", "parse_check", "route", "extract", "validate", "report"]
+
+STEPS = ["audit", "parse", "parse_check", "route", "extract", "validate", "report", "analysis"]
 
 
 def run_step(step: str, config: dict, limit: int | None) -> int:
@@ -29,6 +31,17 @@ def run_step(step: str, config: dict, limit: int | None) -> int:
         return validate_results.run(config, limit=limit)
     if step == "report":
         return report_results.run(config, limit=limit)
+    if step == "analysis":
+        parser = argparse.Namespace(
+            input=config.get("paths", {}).get("unit_normalized_results", "records_validated_unit_normalized.csv"),
+            extract=config.get("paths", {}).get("extract_results", "extract_results.jsonl"),
+            scored_output=config.get("paths", {}).get("quantitative_scored_records", "outputs/results/quantitative_scored_records.csv"),
+            scored_jsonl=config.get("paths", {}).get("quantitative_scored_jsonl", "outputs/results/quantitative_scored_records.jsonl"),
+            flagged_output=config.get("paths", {}).get("attention_review_list", "outputs/analysis/attention_review_list.csv"),
+            events_output=config.get("paths", {}).get("cross_year_events", "outputs/analysis/cross_year_matching_events.csv"),
+            report=config.get("paths", {}).get("quantitative_report", "outputs/reports/quantitative_attention_report.md"),
+        )
+        return quantitative_attention_analysis.run(parser)
     raise ValueError(f"unknown step: {step}")
 
 
@@ -40,7 +53,11 @@ def main() -> int:
     args = parser.parse_args()
 
     config = load_workflow_config(args.config)
-    steps = STEPS if args.step == "all" else [args.step]
+    if args.step == "all":
+        step_config = config.get("steps", {})
+        steps = [step for step in STEPS if step_config.get(step, {}).get("enabled", True)]
+    else:
+        steps = [args.step]
     for step in steps:
         try:
             run_step(step, config, args.limit)

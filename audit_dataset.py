@@ -3,12 +3,12 @@ from __future__ import annotations
 import csv
 from collections import Counter
 
-from src.workflow.common import Timer, append_log, project_path
+from src.workflow.common import Timer, append_log, project_path, resolve_existing
 
 
 def run(config: dict, limit: int | None = None) -> int:
     with Timer() as timer:
-        metadata_path = project_path(config["paths"]["metadata"])
+        metadata_path = resolve_existing(config["paths"]["metadata"])
         rows = list(csv.DictReader(metadata_path.open("r", encoding="utf-8-sig", newline="")))
         if limit:
             rows = rows[:limit]
@@ -19,7 +19,7 @@ def run(config: dict, limit: int | None = None) -> int:
         irrelevant = []
 
         for row in rows:
-            pdf_path = project_path(row["local_pdf_path"])
+            pdf_path = resolve_existing(row["local_pdf_path"])
             if not pdf_path.exists():
                 missing_files.append(row["doc_id"])
             title = row.get("announcement_title", "")

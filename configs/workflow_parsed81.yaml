@@ -1,0 +1,42 @@
+project_name: real_estate_dividend_cashflow_liquidity_parsed81
+
+paths:
+  metadata: data/metadata/metadata_2021_2023_parsed81.csv
+  pdf_dir: data/pdf
+  parsed_dir: data/parsed
+  markdown_dir: data/parsed/markdown
+  parsed_docs: data/parsed/parsed_docs.jsonl
+  sections: data/parsed/sections.jsonl
+  section_report: outputs/reports/section_check_report.csv
+  dataset_report: outputs/reports/dataset_check_report.md
+  extract_results: outputs/results/extract_results.jsonl
+  validated_results: outputs/results/records_validated.csv
+  validation_errors: outputs/logs/validation_errors.jsonl
+  summary_report: outputs/reports/summary_report.md
+  run_log: outputs/logs/run_log.jsonl
+  unit_normalized_results: records_validated_unit_normalized.csv
+  quantitative_scored_records: outputs/results/quantitative_scored_records.csv
+  quantitative_scored_jsonl: outputs/results/quantitative_scored_records.jsonl
+  attention_review_list: outputs/analysis/attention_review_list.csv
+  cross_year_events: outputs/analysis/cross_year_matching_events.csv
+  quantitative_report: outputs/reports/quantitative_attention_report.md
+
+steps:
+  audit:
+    enabled: false
+  parse:
+    enabled: false
+  parse_check:
+    enabled: false
+  route:
+    enabled: false
+    rules: configs/section_rules.yaml
+  extract:
+    enabled: false
+    method: rule
+  validate:
+    enabled: true
+  report:
+    enabled: true
+  analysis:
+    enabled: true

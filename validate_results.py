@@ -4,7 +4,7 @@ import csv
 import json
 
 from src.schemas import DividendCashflowLiquidityExtract
-from src.workflow.common import Timer, append_log, project_path
+from src.workflow.common import Timer, append_log, project_path, resolve_existing
 
 
 def validate_model(data: dict) -> DividendCashflowLiquidityExtract:
@@ -15,7 +15,7 @@ def validate_model(data: dict) -> DividendCashflowLiquidityExtract:
 
 def run(config: dict, limit: int | None = None) -> int:
     with Timer() as timer:
-        rows = [json.loads(line) for line in project_path(config["paths"]["extract_results"]).read_text(encoding="utf-8").splitlines() if line.strip()]
+        rows = [json.loads(line) for line in resolve_existing(config["paths"]["extract_results"]).read_text(encoding="utf-8").splitlines() if line.strip()]
         if limit:
             rows = rows[:limit]
         valid_rows = []

@@ -12,7 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from src.workflow.common import Timer, append_log, project_path
+from src.workflow.common import Timer, append_log, project_path, resolve_existing
 
 
 RISK_KEYWORDS = ["流动性", "融资", "资金压力", "资金安全", "偿债", "债务", "销售回款", "行业下行", "市场下行", "现金流"]
@@ -221,7 +221,7 @@ def build_llm_prompt(base: dict, parts: dict[str, dict]) -> str:
 
 def run(config: dict, limit: int | None = None, method: str = "rule") -> int:
     with Timer() as timer:
-        sections = [json.loads(line) for line in project_path(config["paths"]["sections"]).read_text(encoding="utf-8").splitlines() if line.strip()]
+        sections = [json.loads(line) for line in resolve_existing(config["paths"]["sections"]).read_text(encoding="utf-8").splitlines() if line.strip()]
         grouped: dict[str, dict[str, dict]] = defaultdict(dict)
         meta: dict[str, dict] = {}
         for sec in sections:

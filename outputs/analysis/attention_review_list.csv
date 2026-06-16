@@ -1,0 +1,5 @@
+﻿doc_id,stock_code,stock_name,report_year,has_cash_dividend,cash_dividend_per_10_shares,parent_net_profit_cny,operating_cash_flow_cny,ocf_to_profit_ratio,dividend_pressure_score,profit_pressure_score,cashflow_pressure_score,liquidity_term_hits,liquidity_weighted_hits,liquidity_risk_score,liquidity_risk_quantile,legacy_liquidity_risk_label,attention_score,attention_level,review_reason
+1216273938,000002,万科A,2022,True,6.8,22617778516.45,2750449478.44,0.1216,100.0,10.0,70.0,43,95.5,100.0,high,high,74.5,watch,cash dividend while operating cash flow is weak or negative; liquidity-risk term frequency is high
+1216402029,600639,浦东金桥,2022,True,5.0,1583573935.75,-2531546279.34,,100.0,10.0,100.0,4,10.5,10.99,medium,medium,59.75,watch,cash dividend while operating cash flow is weak or negative
+1219493208,600683,京投发展,2023,,,-659234610.5,-4325766372.9,,15.0,100.0,100.0,16,34.5,36.13,high,high,58.53,watch,net profit is negative; dividend field is missing
+1219583682,600639,浦东金桥,2023,True,5.7,1818789939.0,-6702977654.4,,100.0,10.0,100.0,0,0.0,0.0,none,unknown,57.0,watch,cash dividend while operating cash flow is weak or negative

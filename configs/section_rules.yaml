@@ -1,0 +1,36 @@
+sections:
+  dividend:
+    include_keywords:
+      - 利润分配预案
+      - 分红派息预案
+      - 现金分红
+      - 不派发股息
+      - 不派发现金红利
+      - 每10股
+    exclude_keywords:
+      - 目录
+      - 释义
+      - 索引
+  financial:
+    include_keywords:
+      - 主要会计数据和财务指标
+      - 归属于上市公司股东的净利润
+      - 经营活动产生的现金流量净额
+    exclude_keywords:
+      - 目录
+      - 释义
+      - 索引
+  liquidity_risk:
+    include_keywords:
+      - 流动性风险
+      - 融资情况
+      - 资金情况
+      - 偿债
+      - 销售回款
+      - 行业下行
+      - 可能面对的风险
+      - 现金流
+    exclude_keywords:
+      - 目录
+      - 释义
+      - 索引

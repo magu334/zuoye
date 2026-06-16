@@ -3,37 +3,44 @@
 ## 3-Minute Demo Flow
 
 ### 1. Research Question
+
 Show the project title:
 
-`房地产上市公司年报分红政策、经营现金流与流动性风险一致性分析`
+`Real-estate listed companies: dividend policy, operating cash flow, and liquidity-risk consistency in annual reports`
 
 Explain in one sentence:
 
-We use CNINFO annual reports to check whether real-estate companies' dividend decisions are consistent with operating cash flow, profitability pressure, and liquidity-risk disclosure.
+We use public CNINFO annual reports to check whether real-estate companies' dividend decisions are consistent with operating cash flow, profitability pressure, and liquidity-risk disclosure.
 
-### 2. Data Provenance
-Open `data/metadata/metadata.csv`.
+### 2. Difficulty Claim
+
+Show `difficulty_declaration.md`.
+
+Say:
+
+The upgraded project applies for challenge track 1.1. It now has 175 downloaded CNINFO annual-report PDFs, exceeding the 150+ PDF threshold. The structured 81-record workflow also produces 54 same-company cross-year matching events.
+
+### 3. Data Provenance
+
+Open `metadata_2020_2024_pool150.csv` and one row from the final result.
 
 Point to:
+
 - `doc_id`
 - `stock_code`
 - `stock_name`
-- `title`
+- `report_year`
 - `cninfo_url`
 - `pdf_url`
 - `local_pdf_path`
 
-Say: `doc_id` is the primary key across metadata, PDF, MinerU markdown, routed sections, extraction results, validation, and evaluation.
+Say:
 
-### 3. PDF To Parsed Text
-Open one sample PDF under `data/pdf/`.
-
-Then open the matching MinerU markdown under `data/parsed/markdown/`.
-
-Say: the project does not extract directly from a spreadsheet; it first parses real CNINFO PDF annual reports into markdown and unified JSONL.
+`doc_id` is the primary key across metadata, PDF, MinerU markdown, routed sections, extraction results, validation, scoring, and evaluation.
 
 ### 4. Workflow Command
-Show the full workflow command:
+
+Show:
 
 ```bash
 python pipeline_run.py --config configs/workflow_parsed81.yaml --step all
@@ -42,45 +49,62 @@ python pipeline_run.py --config configs/workflow_parsed81.yaml --step all
 Expected result:
 
 ```text
-[parse] parsed docs=81
-[parse_check] checked docs=81
-[route] sections=243
-[extract] extract records=81
 [validate] valid=81, errors=0
+[report] summary report=outputs/reports/summary_report.md
+[analysis] scored_records=81
+[analysis] flagged_records=4
+[analysis] cross_year_events=54
 ```
 
-### 5. Intermediate Evidence
+### 5. Evidence And Structured Results
+
 Open:
-- `data/parsed/parsed_docs.jsonl`
-- `data/parsed/sections.jsonl`
-- `outputs/reports/section_check_report.csv`
 
-Explain the difference:
-- Routing means the program finds candidate sections.
-- Checking means humans inspect whether those sections are actually correct.
+- `extract_results.jsonl`
+- `records_validated_unit_normalized.csv`
+- `outputs/results/quantitative_scored_records.csv`
 
-### 6. Structured Results
+Explain:
+
+- The original extraction keeps dividend, profit, cash-flow, risk evidence, and old screening labels.
+- Unit normalization converts financial fields into comparable CNY columns.
+- Quantitative scoring adds `liquidity_risk_score`, `liquidity_risk_quantile`, `attention_score`, and `attention_level`.
+
+### 6. Cross-Year Matching
+
 Open:
-- `outputs/results/final_results.csv`
-- `outputs/analysis/flagged_review_list.csv`
 
-Explain one result row:
-- Whether the company paid cash dividends.
-- Operating cash flow sign.
-- Liquidity-risk label.
-- Consistency score.
-- Why it is or is not flagged for review.
+- `outputs/analysis/cross_year_matching_events.csv`
 
-### 7. Evaluation And Failure Case
+Explain one event row:
+
+- Same company, two annual reports.
+- Dividend change.
+- Operating cash-flow change.
+- Net-profit change.
+- Liquidity-risk score change.
+- Attention-score change.
+- Event type.
+
+### 7. Review List
+
 Open:
-- `outputs/evaluation/human_eval_template_81.csv`
-- `outputs/reports/eval_report_final.md`
+
+- `outputs/analysis/attention_review_list.csv`
 
 Say:
 
-The earlier manual audit showed that financial numeric fields are more stable, while liquidity-risk evidence routing is the main error source. Therefore, the final output is used as an analyst screening list, not as unchecked truth.
+This is the final analyst review list. It is sorted by `attention_score`, a weighted 0-100 score, instead of relying only on subjective high/medium/low labels.
 
-### 8. Closing
-Final sentence:
+### 8. Expansion Status And Caveat
 
-This project demonstrates a complete evidence chain from CNINFO PDF to MinerU markdown, routed sections, structured extraction, Pydantic validation, human evaluation, and a reusable review list.
+Open:
+
+- `human_eval_template_81.csv`
+- `human_eval_audit_summary.md`
+- `expansion_status_pdf175.md`
+- `outputs/reports/challenge_1_1_upgrade_report.md`
+
+Say:
+
+The earlier human audit showed that financial numeric fields are more stable than liquidity-risk evidence routing. The project now has 175 PDFs downloaded, while the structured scored workflow covers 81 parsed reports. The remaining PDFs should go through MinerU before they are included in field extraction and scoring.

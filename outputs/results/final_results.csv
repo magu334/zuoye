@@ -1,0 +1,82 @@
+﻿doc_id,stock_code,stock_name,report_year,has_cash_dividend,cash_dividend_per_10_shares,parent_net_profit_cny,operating_cash_flow_cny,ocf_to_profit_ratio,dividend_pressure_score,profit_pressure_score,cashflow_pressure_score,liquidity_term_hits,liquidity_weighted_hits,liquidity_risk_score,liquidity_risk_quantile,legacy_liquidity_risk_label,attention_score,attention_level,review_reason
+1212964021,600048,保利发展,2021,True,5.8,27387836600.0,10551217200.0,0.3853,100.0,10.0,40.0,5,10.0,10.47,low,low,44.62,monitor,routine review
+1213249284,002244,滨江集团,2021,True,2.26,3027327039.62,839419095.72,0.2773,45.2,10.0,70.0,11,21.5,22.51,high,high,38.69,monitor,cash dividend while operating cash flow is weak or negative
+1212942161,600266,城建发展,2021,True,1.0,641255003.77,3091898686.79,4.8216,20.0,10.0,10.0,8,16.0,16.75,medium,medium,14.69,routine,routine review
+1212687124,600649,城投控股,2021,True,1.1,911542960.62,-12678714607.79,,22.0,10.0,100.0,2,4.0,4.19,low,low,34.65,routine,cash dividend while operating cash flow is weak or negative
+1213255431,600094,大名城,2021,,,-412344720.6,6533716477.87,15.8453,15.0,100.0,10.0,9,18.0,18.85,medium,medium,31.71,routine,net profit is negative; dividend field is missing
+1212886659,000031,大悦城,2021,False,0.0,107510183.02,-8464132339.15,,0.0,35.0,100.0,7,13.0,13.61,medium,medium,35.4,monitor,routine review
+1212974325,600658,电子城,2021,True,0.15,31574974.79,2479662143.17,78.5325,3.0,60.0,10.0,1,2.0,2.09,low,low,15.92,routine,routine review
+1212857761,600325,华发股份,2021,True,4.6,3194749145.48,36060713136.64,11.2875,92.0,10.0,10.0,15,34.0,35.6,high,high,41.0,monitor,routine review
+1213001265,000897,津滨发展,2021,False,0.0,488496565.4,1269666726.53,2.5991,0.0,35.0,10.0,4,10.5,10.99,medium,medium,12.25,routine,routine review
+1212897448,600683,京投发展,2021,True,1.3,328623564.48,7538629978.76,22.94,26.0,35.0,10.0,15,30.5,31.94,high,medium,25.28,routine,routine review
+1216282876,600048,保利发展,2022,True,4.5,18346819500.0,7422377100.0,0.4046,90.0,10.0,40.0,5,10.5,10.99,medium,low,41.75,monitor,routine review
+1217376050,002244,滨江集团,2022,True,2.5,3741031371.11,5213654322.38,1.3936,50.0,10.0,10.0,12,23.5,24.61,high,high,25.65,routine,routine review
+1216238461,600266,城建发展,2022,True,1.0,-926179072.98,8337011822.52,9.0015,20.0,100.0,10.0,5,10.0,10.47,low,low,31.12,routine,net profit is negative
+1216220009,600649,城投控股,2022,True,1.1,782555327.01,-8179987359.73,,22.0,10.0,100.0,2,4.5,4.71,low,low,34.78,routine,cash dividend while operating cash flow is weak or negative
+1216411227,600094,大名城,2022,,,170958318.66,864132532.9,5.0546,15.0,35.0,10.0,9,18.5,19.37,high,medium,18.84,routine,dividend field is missing
+1216587088,000031,大悦城,2022,False,0.0,-2882769952.94,2710451072.07,0.9402,0.0,100.0,10.0,5,12.5,13.09,medium,medium,25.77,routine,net profit is negative
+1216492720,600658,电子城,2022,True,0.53,591864971.51,-713342966.07,,10.6,10.0,100.0,3,8.0,8.38,low,medium,32.27,routine,cash dividend while operating cash flow is weak or negative
+1216169340,600325,华发股份,2022,True,3.7,2577816542.73,38344229233.72,14.8747,74.0,10.0,10.0,15,34.0,35.6,high,high,35.6,monitor,routine review
+1216276910,000069,华侨城A,2022,False,0.0,-10905405257.13,-574644519.3,,0.0,100.0,100.0,7,15.0,15.71,medium,medium,48.93,monitor,net profit is negative
+1216663767,600743,华远地产,2022,,,-3821710800.0,1806242600.0,0.4726,15.0,100.0,40.0,4,7.5,7.85,low,medium,36.46,monitor,net profit is negative; dividend field is missing
+1216702482,600383,金地集团,2022,True,1.36,6107289229.12,19907248730.04,3.2596,27.2,10.0,10.0,6,14.0,14.66,medium,high,16.32,routine,routine review
+1216280228,000897,津滨发展,2022,False,0.0,263178142.83,892834962.43,3.3925,0.0,35.0,10.0,4,10.5,10.99,medium,medium,12.25,routine,routine review
+1216235519,600683,京投发展,2022,,,202194286.9,-8353843414.61,,15.0,35.0,100.0,15,30.5,31.94,high,medium,44.48,monitor,dividend field is missing
+1216273292,600663,陆家嘴,2022,True,1.35,1084739736.76,-539026302.25,,27.0,10.0,100.0,2,6.0,6.28,low,low,36.67,monitor,cash dividend while operating cash flow is weak or negative
+1216402029,600639,浦东金桥,2022,True,5.0,1583573935.75,-2531546279.34,,100.0,10.0,100.0,4,10.5,10.99,medium,medium,59.75,watch,cash dividend while operating cash flow is weak or negative
+1216690726,600533,栖霞建设,2022,True,1.0,188655817.51,-904630232.15,,20.0,35.0,100.0,8,17.5,18.32,medium,medium,42.58,monitor,cash dividend while operating cash flow is weak or negative
+1216269818,000014,沙河股份,2022,True,1.2,248678665.41,352480091.64,1.4174,24.0,35.0,10.0,6,11.5,12.04,medium,low,19.71,routine,routine review
+1216402918,600848,上海临港,2022,True,2.0,1008869881.55,630029381.12,0.6245,40.0,10.0,40.0,1,2.0,2.09,low,low,24.52,routine,routine review
+1216655440,000006,深振业A,2022,True,0.94,419619088.67,2315465555.22,5.518,18.8,35.0,10.0,2,4.5,4.71,low,low,16.32,routine,routine review
+1216741112,600376,首开股份,2022,True,1.0,-460946491.82,4418636789.65,9.586,20.0,100.0,10.0,8,19.0,19.9,high,high,33.47,routine,net profit is negative
+1216705586,600736,苏州高新,2022,True,0.47,309735470.79,-4679571955.85,,9.4,35.0,100.0,6,14.5,15.18,medium,medium,38.62,monitor,cash dividend while operating cash flow is weak or negative
+1216277657,000965,天保基建,2022,True,0.2,23303105.24,844983870.05,36.2606,4.0,60.0,10.0,12,23.0,24.08,high,medium,21.72,routine,routine review
+1216094888,600665,天地源,2022,True,580.0,342665522.52,1395278589.93,4.0718,100.0,35.0,10.0,3,8.0,8.38,low,medium,41.59,monitor,routine review
+1216389638,600648,外高桥,2022,True,3.3,1240803308.65,-1709799339.2,,66.0,10.0,100.0,5,10.0,10.47,low,low,49.42,monitor,cash dividend while operating cash flow is weak or negative
+1216273938,000002,万科A,2022,True,6.8,22617778516.45,2750449478.44,0.1216,100.0,10.0,70.0,43,95.5,100.0,high,high,74.5,watch,cash dividend while operating cash flow is weak or negative; liquidity-risk term frequency is high
+1216245554,600657,信达地产,2022,True,0.4,550403895.48,1840131585.83,3.3432,8.0,10.0,10.0,4,7.5,7.85,low,medium,8.86,routine,routine review
+1216221769,000514,渝开发,2022,True,0.2,162789375.4,1331825484.56,8.1813,4.0,35.0,10.0,4,8.0,8.38,low,medium,12.79,routine,routine review
+1216299891,000573,粤宏远A,2022,True,0.8,41552025.96,-60005126.91,,16.0,60.0,100.0,5,11.0,11.52,medium,medium,44.68,monitor,cash dividend while operating cash flow is weak or negative
+1216411318,600895,张江高科,2022,True,1.6,822216239.79,-455738528.54,,32.0,10.0,100.0,3,6.5,6.81,low,medium,38.3,monitor,cash dividend while operating cash flow is weak or negative
+1216166724,001979,招商蛇口,2022,True,2.3,4264079662.72,22173990098.31,5.2002,46.0,10.0,10.0,3,7.0,7.33,low,medium,20.13,routine,routine review
+1216380526,000797,中国武夷,2022,True,0.1,30447748.19,641355271.61,21.0641,2.0,60.0,10.0,3,6.5,6.81,low,low,16.8,routine,routine review
+1216259939,600675,中华企业,2022,True,0.02,23054529.61,-1456241244.26,,0.4,60.0,100.0,2,4.0,4.19,low,low,38.17,monitor,cash dividend while operating cash flow is weak or negative
+1216358368,000736,中交地产,2022,True,0.1,33939531.69,2934839946.48,86.4726,2.0,60.0,10.0,3,7.0,7.33,low,low,16.93,routine,routine review
+1216380219,000042,中洲控股,2022,True,0.12,79662991.66,978788918.66,12.2866,2.4,60.0,10.0,11,22.0,23.04,high,low,20.98,routine,routine review
+1219740785,600048,保利发展,2023,True,4.1,12067156800.0,13930007500.0,1.1544,82.0,10.0,10.0,5,12.0,12.57,medium,low,32.24,routine,routine review
+1219860111,002244,滨江集团,2023,True,0.9,2529138720.52,32650002223.85,12.9095,18.0,10.0,10.0,7,13.0,13.61,medium,high,13.3,routine,routine review
+1219595758,600266,城建发展,2023,True,1.0,558893679.33,13115821322.6,23.4675,20.0,10.0,10.0,6,11.5,12.04,medium,low,13.51,routine,routine review
+1219469544,600649,城投控股,2023,True,0.6,415465384.94,2095748225.61,5.0443,12.0,35.0,10.0,2,4.5,4.71,low,low,14.28,routine,routine review
+1219622167,600094,大名城,2023,,,222551310.4,1648494574.77,7.4073,15.0,35.0,10.0,4,9.5,9.95,low,medium,16.49,routine,dividend field is missing
+1219863705,000031,大悦城,2023,False,0.0,-1465394727.5,10641533128.36,7.2619,0.0,100.0,10.0,3,7.0,7.33,low,medium,24.33,routine,net profit is negative
+1219910873,600658,电子城,2023,False,0.0,-177281513.09,12125999.74,0.0684,0.0,100.0,70.0,2,6.0,6.28,low,low,39.07,monitor,net profit is negative
+1219875404,600325,华发股份,2023,True,3.7,1837841852.48,50543848009.6,27.5017,74.0,10.0,10.0,8,18.0,18.85,medium,high,31.41,routine,routine review
+1219488813,000069,华侨城A,2023,False,0.0,-6492441996.55,3422537369.95,0.5272,0.0,100.0,40.0,3,8.5,8.9,low,medium,32.23,routine,net profit is negative
+1219854998,600743,华远地产,2023,,,-1536747900.0,75068200.0,0.0488,15.0,100.0,70.0,3,6.5,6.81,low,medium,43.7,monitor,net profit is negative; dividend field is missing
+1219307600,600383,金地集团,2023,True,0.197,888123647.45,2192504200.55,2.4687,3.94,10.0,10.0,6,14.0,14.66,medium,high,9.35,routine,routine review
+1219997738,000897,津滨发展,2023,False,0.0,524858025.13,-319197708.14,,0.0,10.0,100.0,3,6.5,6.81,low,low,28.7,routine,routine review
+1219493208,600683,京投发展,2023,,,-659234610.5,-4325766372.9,,15.0,100.0,100.0,16,34.5,36.13,high,high,58.53,watch,net profit is negative; dividend field is missing
+1222823303,600663,陆家嘴,2023,True,1.14,1093441682.63,11380550776.89,10.408,22.8,10.0,10.0,2,6.0,6.28,low,low,12.91,routine,routine review
+1219468516,002314,南山控股,2023,False,0.0,147022699.61,5701298254.25,38.7784,0.0,35.0,10.0,13,32.5,34.03,high,high,18.01,routine,routine review
+1219583682,600639,浦东金桥,2023,True,5.7,1818789939.0,-6702977654.4,,100.0,10.0,100.0,0,0.0,0.0,none,unknown,57.0,watch,cash dividend while operating cash flow is weak or negative
+1219915446,600533,栖霞建设,2023,,,-134388981.92,-1059824502.61,,15.0,100.0,100.0,8,16.0,16.75,medium,medium,53.69,monitor,net profit is negative; dividend field is missing
+1219865459,002146,荣盛发展,2023,False,0.0,385019315.14,-1482614272.91,,0.0,35.0,100.0,5,12.5,13.09,medium,medium,35.27,monitor,routine review
+1219460432,000014,沙河股份,2023,True,2.16,521765764.33,479912014.13,0.9198,43.2,10.0,10.0,7,13.0,13.61,medium,low,20.86,routine,routine review
+1219596576,600848,上海临港,2023,True,2.0,1060637822.65,-5556624006.2,,40.0,10.0,100.0,10,20.0,20.94,high,low,44.24,monitor,cash dividend while operating cash flow is weak or negative
+1219865454,000006,深振业A,2023,False,0.0,-802652783.79,72763171.55,0.0907,0.0,100.0,70.0,3,8.5,8.9,low,medium,39.73,monitor,net profit is negative
+1219689383,600376,首开股份,2023,False,0.0,-6338523623.31,5667322492.02,0.8941,0.0,100.0,10.0,6,12.5,13.09,medium,medium,25.77,routine,net profit is negative
+1219876783,600736,苏州高新,2023,True,0.27,202071171.25,-1516174996.05,,5.4,35.0,100.0,6,14.5,15.18,medium,medium,37.42,monitor,cash dividend while operating cash flow is weak or negative
+1219445524,000965,天保基建,2023,True,0.2,20036525.31,-1244352050.69,,4.0,60.0,100.0,6,11.0,11.52,medium,low,41.08,monitor,cash dividend while operating cash flow is weak or negative
+1219907193,600665,天地源,2023,,,-390388594.01,1021864607.65,2.6176,15.0,100.0,10.0,4,12.0,12.57,medium,medium,30.14,routine,net profit is negative; dividend field is missing
+1219840458,600648,外高桥,2023,True,3.5,153121365.07,328789126.84,2.1472,70.0,35.0,10.0,2,4.5,4.71,low,low,31.68,routine,routine review
+1219487237,000002,万科A,2023,False,0.0,12162684368.86,3912323920.11,0.3217,0.0,10.0,40.0,38,85.0,89.01,high,medium,34.25,routine,liquidity-risk term frequency is high
+1219446608,601155,新城控股,2023,False,0.0,737102713.0,10157788553.0,13.7807,0.0,10.0,10.0,10,22.0,23.04,high,high,10.26,routine,routine review
+1219412328,600657,信达地产,2023,False,0.0,505369230.49,712494411.15,1.4098,0.0,10.0,10.0,4,9.5,9.95,low,medium,6.99,routine,routine review
+1219824168,000514,渝开发,2023,True,0.12,105730824.17,-189955616.17,,2.4,35.0,100.0,4,8.0,8.38,low,medium,34.81,routine,cash dividend while operating cash flow is weak or negative
+1219600830,000573,粤宏远A,2023,True,0.6,66085698.17,-298416500.5,,12.0,60.0,100.0,5,11.0,11.52,medium,medium,43.48,monitor,cash dividend while operating cash flow is weak or negative
+1219463872,600895,张江高科,2023,True,1.9,947899545.53,-2785411690.76,,38.0,10.0,100.0,3,6.5,6.81,low,medium,40.1,monitor,cash dividend while operating cash flow is weak or negative
+1219330022,001979,招商蛇口,2023,True,3.2,6319420453.25,31430984938.66,4.9737,64.0,10.0,10.0,5,12.5,13.09,medium,medium,26.97,routine,routine review
+1219597689,000797,中国武夷,2023,True,0.1,39010956.14,1270159120.88,32.559,2.0,60.0,10.0,3,6.5,6.81,low,low,16.8,routine,routine review
+1219650634,600675,中华企业,2023,True,0.28,555159988.34,-106422876.62,,5.6,10.0,100.0,2,4.0,4.19,low,low,29.73,routine,cash dividend while operating cash flow is weak or negative
+1219517434,000736,中交地产,2023,False,0.0,-1673099491.28,7048582150.05,4.2129,0.0,100.0,10.0,3,7.0,7.33,low,low,24.33,routine,net profit is negative
+1219769062,000042,中洲控股,2023,False,0.0,-1844825335.86,1351914948.89,0.7328,0.0,100.0,40.0,13,26.0,27.23,high,low,36.81,monitor,net profit is negative

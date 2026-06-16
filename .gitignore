@@ -5,3 +5,4 @@ __pycache__/
 work/data/
 work/logs/
 outputs/logs/*.tmp
+data/pdf/
