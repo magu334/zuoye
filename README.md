@@ -1,88 +1,93 @@
 # Real Estate Dividend, Cash Flow, and Liquidity Risk Project
 
 ## Project Title
-房地产上市公司年报分红政策、经营现金流与流动性风险一致性分析
+房地产上市公司年报中的分红政策、经营现金流与流动性风险一致性分析
 
 ## Financial Question
-This project asks whether A-share real-estate listed companies' dividend decisions are consistent with their operating cash flow, profitability pressure, and liquidity-risk disclosure in annual reports.
+This project asks whether A-share real-estate listed companies' cash-dividend decisions are consistent with operating cash flow, profitability pressure, and liquidity-risk disclosure in annual reports.
 
-The practical output is an analyst review ledger. It does not directly produce investment advice; instead, it flags companies that deserve manual review, such as firms paying cash dividends while operating cash flow or net profit is negative, or while liquidity-risk disclosure is high.
+The output is an analyst review list. It is not investment advice. It flags company-year records that deserve manual review, especially cases where dividends coexist with weak operating cash flow, negative profit, or stronger liquidity-risk disclosure.
 
 ## Data Source And Scope
 - Source: public CNINFO annual-report announcements.
 - Announcement type: annual reports.
 - Industry scope: A-share real-estate listed companies.
-- Downloaded PDF pool: 175 annual reports.
-- Structured parsed/scored sample: 81 annual reports.
-- PDF year coverage: 2020-2024.
-- Parsed/scored year coverage: 2021-2023.
-- Expanded metadata file: `metadata_2020_2024_pool150.csv`.
-- Existing parsed metadata/result files remain available for the 81-record structured workflow.
-- Some course-template paths still use `data/metadata/`, `data/pdf/`, and `data/parsed/`; the runner has a fallback layer so current flat files can still be used.
-- The final reproducible 81-record checks use the saved extraction and normalized result artifacts.
+- PDF pool: 175 annual reports.
+- Structured extraction/scoring records: 175 annual reports.
+- Companies: 37.
+- Year coverage: 2020-2024.
+- Download failures: 0.
+- Metadata: `data/metadata/metadata.csv` and `metadata_2020_2024_pool150.csv`.
 
-Each document is tracked by `doc_id`, stock code, stock name, announcement title, CNINFO URL, PDF URL, local PDF path, and parsed markdown path.
+Each document is tracked by `doc_id`, stock code, stock name, report year, announcement title, CNINFO URL, PDF URL, local PDF path, parser name, and parsed text path.
 
 ## Difficulty
 Requested difficulty: challenge track, coefficient 1.1.
 
-Reason: the project now has a 175-PDF CNINFO annual-report pool, exceeding the 150+ PDF challenge-track threshold. The current structured workflow additionally treats the parsed 81 annual reports as a cross-year matching dataset: 34 companies have at least two years of parsed/scored records, producing 54 same-company cross-year matching events. The project also adds timeline comparison, weighted scoring, and a priority review list.
+The project exceeds the 150+ PDF threshold with 175 CNINFO annual reports. It also builds same-company cross-year comparisons from the structured records: 35 companies have at least two years, producing 342 same-company year-pair events, including 138 consecutive-year events. The workflow adds weighted scoring, cross-year pressure, and a final review list.
 
 ## Directory Structure
 - `configs/`: workflow, model, crawl, and section-routing configuration.
 - `data/metadata/`: CNINFO metadata CSV files.
-- `data/pdf/`: downloaded CNINFO PDF files.
-- `data/parsed/`: parsed documents, markdown files, and routed sections.
+- `data/parsed/`: parsed text samples and routed section samples.
 - `prompts/`: prompt templates.
-- `src/`: parsing, routing, extraction, validation, reporting, and workflow scripts.
-- `outputs/logs/`: run logs and validation errors.
-- `outputs/results/`: extraction and validated result files.
-- `outputs/reports/`: dataset, section, evaluation, and analysis reports.
+- `src/`: shared workflow helpers.
+- Root scripts: audit, parse, route, extract, validate, normalize, analyze, and report.
+- `outputs/results/`: extraction, validation, normalized, scored, and final result files.
+- `outputs/analysis/`: attention review list and cross-year events.
+- `outputs/reports/`: dataset, unit normalization, quantitative, evaluation, and summary reports.
 - `outputs/evaluation/`: human evaluation templates and audit records.
-- `outputs/analysis/`: result analysis tables.
-- `work/`: local temporary working files. Do not treat this as final submission material.
+
+Original PDFs are kept locally under `data/pdf/` but are intentionally ignored by Git because they are large. The repository includes metadata and scripts so the PDF pool can be reproduced.
 
 ## Setup
 ```bash
 python -m pip install -r requirements.txt
 ```
 
-Create a local `.env` from `.env.example` and fill real keys locally only. Do not commit `.env`.
+Create a local `.env` from `.env.example` if using API-based extraction. Keep real keys local only. Do not commit `.env`.
 
-## Minimal Check
-If `python` is available in your current environment:
+## Reproducible Commands
+Check the runner:
 
 ```bash
 python pipeline_run.py --help
 ```
 
-Current artifact workflow:
+Run the full current workflow:
 
 ```bash
-python pipeline_run.py --config configs/workflow_parsed81.yaml --step all
+python pipeline_run.py --config configs/workflow.yaml --step all
 ```
 
-For the current flat repository layout, `--step all` runs enabled reproducible steps only: validate, report, and quantitative analysis for the existing 81 structured records. Expanding the structured workflow from 81 to the full 175-PDF pool requires sending the newly downloaded PDFs through MinerU and then rerunning parse/route/extract.
+The full workflow parses the 175 local PDFs. If MinerU markdown exists for a `doc_id`, `parse_docs.py` uses it; otherwise it uses the local `pypdf_text_fallback`. The latest full run used the fallback for all 175 PDFs because no full MinerU markdown batch was present in the repository.
 
 ## Workflow
 ```text
 metadata
-  -> audit
-  -> parse
-  -> parse_check
-  -> route
-  -> extract
-  -> validate
-  -> report
+  -> audit dataset
+  -> parse PDF text
+  -> parse check
+  -> route dividend / financial / liquidity-risk sections
+  -> extract core fields
+  -> Pydantic validation
+  -> unit normalization
+  -> quantitative attention analysis
+  -> summary report
 ```
 
-Latest artifact run:
+Latest full run:
 
 ```text
-[validate] valid=81, errors=0
-[analysis] scored_records=81
-[analysis] flagged_records=7
-[analysis] cross_year_events=54
+[audit] dataset report=outputs/reports/dataset_check_report.md
+[parse] parsed docs=175, mineru=0, pdf_text_fallback=175
+[parse_check] checked docs=175
+[route] sections=525
+[extract] extract records=175
+[validate] valid=175, errors=0
+[analysis] scored_records=175
+[analysis] flagged_records=27
+[analysis] cross_year_events=342
 [report] summary report=outputs/reports/summary_report.md
 ```
 
@@ -99,50 +104,50 @@ Latest artifact run:
 - `dividend_pressure_score`
 - `profit_pressure_score`
 - `cashflow_pressure_score`
+- `liquidity_term_hits`
+- `liquidity_weighted_hits`
 - `liquidity_risk_score`
 - `liquidity_risk_quantile`
+- `base_attention_score`
+- `cross_year_pressure_score`
 - `attention_score`
 - `attention_level`
 
-Key fields are accompanied by evidence where available. Pydantic schema is defined in `src/schemas.py`.
+Pydantic schema is defined in `schemas.py`.
 
 ## Main Outputs
-- `records_validated.csv` and `outputs/results/records_validated.csv`: validated CSV output.
-- `extract_results.jsonl`: structured extraction JSONL.
-- `outputs/results/quantitative_scored_records.csv`: 81 records with comparable risk and attention scores.
-- `outputs/logs/sample_run_log.jsonl`: sample workflow log.
+- `outputs/results/extract_results.jsonl`: structured extraction JSONL.
+- `outputs/results/records_validated.csv`: 175 Pydantic-validated records.
+- `outputs/results/records_validated_unit_normalized.csv`: 175 unit-normalized records.
+- `outputs/results/quantitative_scored_records.csv`: 175 comparable scoring records.
+- `outputs/results/final_results.csv`: final 175-record result table.
+- `outputs/analysis/attention_review_list.csv`: 27 records sorted by final `attention_score`.
+- `outputs/analysis/cross_year_matching_events.csv`: 342 same-company cross-year events.
+- `outputs/reports/quantitative_attention_report.md`: scoring and cross-year matching report.
 - `outputs/reports/eval_report_final.md`: final evaluation report.
-- `outputs/reports/quantitative_attention_report.md`: quantitative scoring and cross-year matching report.
-- `outputs/reports/analysis_results_parsed81.md`: result analysis.
-- `outputs/analysis/attention_review_list.csv`: priority manual-review list sorted by weighted attention score.
-- `outputs/analysis/cross_year_matching_events.csv`: 54 same-company cross-year matching events.
-- `outputs/evaluation/human_eval_template_81.csv`: human evaluation table for 81 reports.
+- `final_report.md`: final project report.
+- `proposal_zh.md`: Chinese proposal.
+- `ppt_project_steps_zh.md`: PPT-ready project flow.
 
 ## Evaluation Summary
-The 81-report workflow produced 81 valid records and 0 Pydantic validation errors.
+- Metadata records: 175.
+- Parsed records: 175.
+- Routed sections: 525.
+- Validated records: 175.
+- Validation errors: 0.
+- Parent net profit completeness: 175/175.
+- Operating cash flow completeness: 175/175.
+- Unit normalization high-confidence records: 175/175.
+- Attention levels: priority 2, watch 25, monitor 67, routine 81.
+- Cross-year pressure levels: high 15, medium 35, low 64, none 61.
 
-Current result analysis:
-- Downloaded PDF pool: 175.
-- PDF year distribution: 2020 = 33, 2021 = 35, 2022 = 35, 2023 = 37, 2024 = 35.
-- Cash dividend records: 54.
-- No-cash-dividend records: 18.
-- Dividend field missing records: 9.
-- Negative operating cash flow records: 26.
-- Negative parent net profit records: 17.
-- Cash dividend with negative operating cash flow: 19.
-- Quantitative liquidity-risk quantiles: high 17, medium 28, low 35, none 1.
-- Weighted attention levels: watch 4, monitor 28, routine 49.
-- Cross-year matching events: 54 total same-company year pairs, including 44 consecutive year pairs.
-
-`liquidity_risk_label` and `consistency_score` are retained for backward compatibility. The final comparison uses `liquidity_risk_score`, `liquidity_risk_quantile`, `attention_score`, and `attention_level`, all generated by `quantitative_attention_analysis.py`.
-
-Earlier human audit on the 37-report stage found that financial field values were more stable than liquidity-risk evidence routing. The main error source was section routing for risk evidence.
+`liquidity_risk_label` and `consistency_score` are retained for backward compatibility. The final comparison uses `liquidity_risk_score`, `liquidity_risk_quantile`, `base_attention_score`, `cross_year_pressure_score`, `attention_score`, and `attention_level`.
 
 ## Main Limitations
-- 175 PDFs have been downloaded, but the structure-scored workflow currently covers 81 parsed reports. The remaining PDFs need MinerU parsing before field extraction.
-- Liquidity-risk scores are screening scores and require manual evidence review.
-- Some evidence page numbers are approximate because parsed markdown page markers are not always stable.
-- The baseline extraction is rule-based; LLM extraction was tested separately but is not treated as the only source of truth.
+- The current 175-record extraction is a rule baseline based on parsed PDF text. High-attention records still need manual evidence review.
+- PDF text extraction can be weaker than layout-aware parsing for complex tables; MinerU can be added later for stronger page/table fidelity.
+- Evidence page markers are approximate because parsed text may not preserve stable original PDF page markers.
+- The attention score is a screening score for review prioritization, not a final financial-risk conclusion.
 
 ## Secret And Compliance Rules
 - Main data comes from public CNINFO announcements.

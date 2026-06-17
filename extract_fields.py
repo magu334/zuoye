@@ -22,20 +22,35 @@ def clean(text: str) -> str:
     return re.sub(r"\s+", " ", text or "").strip()
 
 
+def loose_label_pattern(label: str) -> str:
+    return r"\s*".join(re.escape(char) for char in label)
+
+
 def number_from_nearby(label: str, text: str) -> tuple[float | None, str | None]:
     compact = clean(text)
-    idx = compact.find(label)
-    if idx < 0:
+    indexes = [match.start() for match in re.finditer(loose_label_pattern(label), compact)]
+    if not indexes:
         return None, None
-    snippet = compact[idx : idx + 260]
-    match = re.search(r"(-?\d[\d,]*(?:\.\d+)?)", snippet)
-    if not match:
-        return None, snippet
-    raw = match.group(1)
-    try:
-        return float(raw.replace(",", "")), snippet
-    except ValueError:
-        return None, snippet
+    fallback_snippet = compact[indexes[0] : indexes[0] + 700]
+    for idx in indexes:
+        snippet = compact[idx : idx + 700]
+        for match in re.finditer(r"\(?-?\d[\d,]*(?:\.\d+)?\)?%?", snippet):
+            raw = match.group(0)
+            if raw.endswith("%"):
+                continue
+            cleaned = raw.strip("()").replace(",", "")
+            try:
+                value = float(cleaned)
+            except ValueError:
+                continue
+            if raw.startswith("(") and raw.endswith(")"):
+                value = -value
+            if 1900 <= abs(value) <= 2030:
+                continue
+            if abs(value) < 1000 and "," not in raw:
+                continue
+            return value, snippet
+    return None, fallback_snippet
 
 
 def extract_dividend(section: dict) -> dict | None:

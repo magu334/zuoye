@@ -36,6 +36,8 @@ steps:
     method: rule
   validate:
     enabled: true
+  normalize:
+    enabled: true
   report:
     enabled: true
   analysis:

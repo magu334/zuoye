@@ -5,6 +5,7 @@ paths:
   pdf_dir: data/pdf
   parsed_dir: data/parsed
   markdown_dir: data/parsed/markdown
+  pdf_text_dir: data/parsed/pdf_text
   parsed_docs: data/parsed/parsed_docs.jsonl
   sections: data/parsed/sections.jsonl
   section_report: outputs/reports/section_check_report.csv
@@ -12,6 +13,14 @@ paths:
   extract_results: outputs/results/extract_results.jsonl
   validated_results: outputs/results/records_validated.csv
   validation_errors: outputs/logs/validation_errors.jsonl
+  unit_normalized_results: outputs/results/records_validated_unit_normalized.csv
+  unit_normalization_errors: outputs/logs/unit_normalization_validation_errors.jsonl
+  unit_normalization_report: outputs/reports/unit_normalization_report.md
+  quantitative_scored_records: outputs/results/quantitative_scored_records.csv
+  quantitative_scored_jsonl: outputs/results/quantitative_scored_records.jsonl
+  attention_review_list: outputs/analysis/attention_review_list.csv
+  cross_year_events: outputs/analysis/cross_year_matching_events.csv
+  quantitative_report: outputs/reports/quantitative_attention_report.md
   summary_report: outputs/reports/summary_report.md
   run_log: outputs/logs/run_log.jsonl
 
@@ -20,6 +29,9 @@ steps:
     enabled: true
   parse:
     enabled: true
+    max_pages:
+  parse_check:
+    enabled: true
   route:
     enabled: true
     rules: configs/section_rules.yaml
@@ -27,6 +39,10 @@ steps:
     enabled: true
     method: rule
   validate:
+    enabled: true
+  normalize:
+    enabled: true
+  analysis:
     enabled: true
   report:
     enabled: true

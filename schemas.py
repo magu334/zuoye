@@ -1,8 +1,11 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
+
+
+ReportYear = Literal["2020", "2021", "2022", "2023", "2024"]
 
 
 class Evidence(BaseModel):
@@ -35,7 +38,7 @@ class DividendCashflowLiquidityExtract(BaseModel):
     doc_id: str
     stock_code: str
     stock_name: str
-    report_year: Literal["2021", "2022", "2023"]
+    report_year: ReportYear
     title: str
     event_type: str
     dividend_plan: Optional[DividendPlan] = None
@@ -50,7 +53,7 @@ class QuantitativeScoredRecord(BaseModel):
     doc_id: str
     stock_code: str
     stock_name: str
-    report_year: Literal["2021", "2022", "2023"]
+    report_year: ReportYear
     has_cash_dividend: Optional[bool] = None
     cash_dividend_per_10_shares: Optional[float] = None
     parent_net_profit_cny: Optional[float] = None
@@ -73,9 +76,9 @@ class CrossYearMatchingEvent(BaseModel):
     event_id: str
     stock_code: str
     stock_name: str
-    from_year: Literal["2021", "2022"]
-    to_year: Literal["2022", "2023"]
-    year_gap: int = Field(..., ge=1, le=2)
+    from_year: ReportYear
+    to_year: ReportYear
+    year_gap: int = Field(..., ge=1, le=4)
     is_consecutive_pair: bool
     from_doc_id: str
     to_doc_id: str
@@ -83,6 +86,8 @@ class CrossYearMatchingEvent(BaseModel):
     ocf_delta_cny: Optional[float] = None
     profit_delta_cny: Optional[float] = None
     risk_score_delta: float
-    attention_score_delta: float
+    base_attention_score_delta: float
+    final_attention_score_delta: float
+    cross_year_pressure_score: float = Field(..., ge=0, le=100)
     event_type: str
     review_reason: str

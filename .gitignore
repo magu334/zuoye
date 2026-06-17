@@ -6,3 +6,6 @@ work/data/
 work/logs/
 outputs/logs/*.tmp
 data/pdf/
+data/parsed/pdf_text/
+data/parsed/parsed_docs.jsonl
+data/parsed/sections.jsonl

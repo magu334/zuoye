@@ -11,13 +11,14 @@ from pydantic import BaseModel, Field, ValidationError
 
 
 Unit = Literal["yuan", "wan_yuan", "yi_yuan", "unknown"]
+ReportYear = Literal["2020", "2021", "2022", "2023", "2024"]
 
 
 class NormalizedRecord(BaseModel):
     doc_id: str
     stock_code: str
     stock_name: str
-    report_year: Literal["2021", "2022", "2023"]
+    report_year: ReportYear
     has_cash_dividend: Optional[bool] = None
     cash_dividend_per_10_shares: Optional[float] = None
     parent_net_profit_raw: Optional[float] = None
@@ -107,6 +108,12 @@ def load_markdown_paths(metadata_path: Path, root: Path) -> dict[str, Path]:
     markdown_dir = root / "data" / "parsed" / "markdown"
     if markdown_dir.exists():
         for path in markdown_dir.glob("doc_*_pages_*.md"):
+            match = re.match(r"doc_(\d+)_", path.name)
+            if match:
+                paths.setdefault(match.group(1), path.relative_to(root))
+    pdf_text_dir = root / "data" / "parsed" / "pdf_text"
+    if pdf_text_dir.exists():
+        for path in pdf_text_dir.glob("doc_*_pdf_text.md"):
             match = re.match(r"doc_(\d+)_", path.name)
             if match:
                 paths.setdefault(match.group(1), path.relative_to(root))

@@ -9,10 +9,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from src import audit_dataset, extract_fields, parse_check, parse_docs, report_results, route_sections, validate_results
 from src.workflow.common import append_log, load_workflow_config
 
+import normalize_units
 import quantitative_attention_analysis
 
 
-STEPS = ["audit", "parse", "parse_check", "route", "extract", "validate", "analysis", "report"]
+STEPS = ["audit", "parse", "parse_check", "route", "extract", "validate", "normalize", "analysis", "report"]
 
 
 def run_step(step: str, config: dict, limit: int | None) -> int:
@@ -29,6 +30,16 @@ def run_step(step: str, config: dict, limit: int | None) -> int:
         return extract_fields.run(config, limit=limit, method=method)
     if step == "validate":
         return validate_results.run(config, limit=limit)
+    if step == "normalize":
+        paths = config.get("paths", {})
+        return normalize_units.run(
+            input_csv=normalize_units.Path.cwd() / paths.get("validated_results", "outputs/results/records_validated.csv"),
+            metadata_csv=normalize_units.Path.cwd() / paths.get("metadata", "data/metadata/metadata.csv"),
+            output_csv=normalize_units.Path.cwd() / paths.get("unit_normalized_results", "outputs/results/records_validated_unit_normalized.csv"),
+            errors_jsonl=normalize_units.Path.cwd() / paths.get("unit_normalization_errors", "outputs/logs/unit_normalization_validation_errors.jsonl"),
+            report_md=normalize_units.Path.cwd() / paths.get("unit_normalization_report", "outputs/reports/unit_normalization_report.md"),
+            root=normalize_units.Path.cwd(),
+        )
     if step == "report":
         return report_results.run(config, limit=limit)
     if step == "analysis":

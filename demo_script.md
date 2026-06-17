@@ -3,26 +3,23 @@
 ## 3-Minute Demo Flow
 
 ### 1. Research Question
-
 Show the project title:
 
 `Real-estate listed companies: dividend policy, operating cash flow, and liquidity-risk consistency in annual reports`
 
-Explain in one sentence:
+Say:
 
 We use public CNINFO annual reports to check whether real-estate companies' dividend decisions are consistent with operating cash flow, profitability pressure, and liquidity-risk disclosure.
 
 ### 2. Difficulty Claim
-
-Show `difficulty_declaration.md`.
+Open `difficulty_declaration.md`.
 
 Say:
 
-The upgraded project applies for challenge track 1.1. It now has 175 downloaded CNINFO annual-report PDFs, exceeding the 150+ PDF threshold. The structured 81-record workflow also produces 54 same-company cross-year matching events.
+The upgraded project applies for challenge track 1.1. It has 175 CNINFO annual-report PDFs and 175 structured scored records, exceeding the 150+ PDF threshold. It also produces 342 same-company cross-year matching events, exceeding the 50+ multi-document event threshold.
 
 ### 3. Data Provenance
-
-Open `metadata_2020_2024_pool150.csv` and one row from the final result.
+Open `data/metadata/metadata.csv` and one row from `outputs/results/final_results.csv`.
 
 Point to:
 
@@ -36,32 +33,34 @@ Point to:
 
 Say:
 
-`doc_id` is the primary key across metadata, PDF, MinerU markdown, routed sections, extraction results, validation, scoring, and evaluation.
+`doc_id` is the primary key across metadata, local PDF, parsed text, routed sections, extraction results, validation, scoring, and evaluation.
 
 ### 4. Workflow Command
-
 Show:
 
 ```bash
-python pipeline_run.py --config configs/workflow_parsed81.yaml --step all
+python pipeline_run.py --config configs/workflow.yaml --step all
 ```
 
 Expected result:
 
 ```text
-[validate] valid=81, errors=0
-[analysis] scored_records=81
-[analysis] flagged_records=7
-[analysis] cross_year_events=54
-[report] summary report=outputs/reports/summary_report.md
+[parse] parsed docs=175, mineru=0, pdf_text_fallback=175
+[validate] valid=175, errors=0
+[analysis] scored_records=175
+[analysis] flagged_records=27
+[analysis] cross_year_events=342
 ```
 
-### 5. Evidence And Structured Results
+Say:
 
+The parser prefers MinerU markdown when available. In the current full run, MinerU markdown was absent for the full pool, so the project used reproducible local PDF text fallback for all 175 PDFs.
+
+### 5. Evidence And Structured Results
 Open:
 
-- `extract_results.jsonl`
-- `records_validated_unit_normalized.csv`
+- `outputs/results/extract_results.jsonl`
+- `outputs/results/records_validated_unit_normalized.csv`
 - `outputs/results/quantitative_scored_records.csv`
 
 Explain:
@@ -71,7 +70,6 @@ Explain:
 - Quantitative scoring adds `liquidity_risk_score`, `liquidity_risk_quantile`, `base_attention_score`, `cross_year_pressure_score`, final `attention_score`, and `attention_level`.
 
 ### 6. Cross-Year Matching
-
 Open:
 
 - `outputs/analysis/cross_year_matching_events.csv`
@@ -89,24 +87,21 @@ Explain one event row:
 - Event type.
 
 ### 7. Review List
-
 Open:
 
 - `outputs/analysis/attention_review_list.csv`
 
 Say:
 
-This is the final analyst review list. It is sorted by final `attention_score`, which combines single-year pressure and same-company cross-year deterioration signals, instead of relying only on subjective high/medium/low labels.
+This is the final analyst review list. It contains 27 records and is sorted by final `attention_score`, which combines single-year pressure and same-company cross-year deterioration signals. It no longer relies only on subjective high/medium/low labels.
 
-### 8. Expansion Status And Caveat
-
+### 8. Evaluation And Caveat
 Open:
 
-- `human_eval_template_81.csv`
-- `human_eval_audit_summary.md`
-- `expansion_status_pdf175.md`
+- `outputs/reports/eval_report_final.md`
 - `outputs/reports/challenge_1_1_upgrade_report.md`
+- `outputs/reports/quantitative_attention_report.md`
 
 Say:
 
-The earlier human audit showed that financial numeric fields are more stable than liquidity-risk evidence routing. The project now has 175 PDFs downloaded, while the structured scored workflow covers 81 parsed reports. The remaining PDFs should go through MinerU before they are included in field extraction and scoring.
+The project now completes the full 175-record workflow. The key caveat is that this is a rule baseline from parsed PDF text, so high-attention records should still be manually checked against the original annual report before being used as financial conclusions.

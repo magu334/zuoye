@@ -85,7 +85,7 @@ def run(config: dict, limit: int | None = None) -> int:
             "- Rule baseline is intentionally simple and should be reviewed manually.",
             "- Unit-normalized financial fields are available in `records_validated_unit_normalized.csv`.",
             "- High-attention records should be manually verified against evidence before being used as financial conclusions.",
-            "- Evidence page numbers are approximate because the current MinerU markdown keeps text but not stable original PDF page markers.",
+            "- Evidence page numbers are approximate because parsed text may not preserve stable original PDF page markers.",
         ]
         report_path.write_text("\n".join(lines), encoding="utf-8")
     append_log(config, "report", "success", count=len(rows), elapsed=timer.elapsed)
