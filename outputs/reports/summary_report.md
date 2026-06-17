@@ -30,10 +30,11 @@
 - none: 1
 
 ## Attention Scores
-- `attention_score` is weighted from dividend pressure, cash-flow pressure, profit pressure, and liquidity-risk score.
-- watch: 4
-- monitor: 28
-- routine: 49
+- `base_attention_score` is weighted from dividend pressure, cash-flow pressure, profit pressure, and liquidity-risk score.
+- Final `attention_score` adds cross-year pressure from same-company matching events, so the review list is connected to cross-year deterioration signals.
+- watch: 7
+- monitor: 34
+- routine: 40
 
 ## Cross-Year Matching
 - Same-company year-pair events: 54

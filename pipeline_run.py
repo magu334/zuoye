@@ -12,7 +12,7 @@ from src.workflow.common import append_log, load_workflow_config
 import quantitative_attention_analysis
 
 
-STEPS = ["audit", "parse", "parse_check", "route", "extract", "validate", "report", "analysis"]
+STEPS = ["audit", "parse", "parse_check", "route", "extract", "validate", "analysis", "report"]
 
 
 def run_step(step: str, config: dict, limit: int | None) -> int:

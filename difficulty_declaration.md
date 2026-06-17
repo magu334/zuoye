@@ -16,7 +16,7 @@
 
 新增 `quantitative_attention_analysis.py` 后，`liquidity_risk_label` 不再作为唯一判断依据，而是降级为 legacy screening label。正式分析使用 `liquidity_risk_score`：从风险证据文本和抽取关键词中统计风险词频，按“流动性、融资、债务、现金流、市场下行”五类加权，再归一化到 0-100，并按全样本分布生成可比较的 `liquidity_risk_quantile`。
 
-一致性判断也从 1-3 档主观分扩展为 0-100 的 `attention_score`。权重为：分红压力 30%、现金流压力 25%、利润压力 20%、流动性风险 25%。最终输出 `outputs/analysis/attention_review_list.csv`，按综合关注分排序生成“值得关注清单”，用于人工复核和答辩展示。
+一致性判断也从 1-3 档主观分扩展为 0-100 的 `attention_score`。项目先用分红压力 30%、现金流压力 25%、利润压力 20%、流动性风险 25% 构建 `base_attention_score`，再把同公司跨年匹配事件转化为 `cross_year_pressure_score`。最终 `attention_score = base_attention_score + 20% * cross_year_pressure_score`，使跨年恶化信号直接影响 `outputs/analysis/attention_review_list.csv` 的排序，用于人工复核和答辩展示。
 
 ## 对照 1.1 档要求
 
@@ -25,7 +25,7 @@
 | 150+ PDF | 已下载 175 份 CNINFO 年报 PDF |
 | 50+ 组多文档匹配事件 | 54 组同公司跨年度年报 pair |
 | 多阶段事件 / 时间线 | 2021-2023 同公司分红、利润、现金流、风险分变化 |
-| 闭环分析 | 从年报证据抽取到量化评分，再到关注清单和人工复核 |
+| 闭环分析 | 从年报证据抽取到单年量化评分、跨年压力评分，再到关注清单和人工复核 |
 | 评分 | `liquidity_risk_score`、`attention_score`、`attention_level` |
 | 10 个以上字段 | 原始字段 + 单位标准化 + 多个压力分 + 事件变化字段 |
 | 评估与证据 | Pydantic 校验、人工评估模板、37 份阶段人工审计记录 |

@@ -61,7 +61,8 @@ metadata -> PDF 下载 -> 数据审计 -> MinerU 解析 -> Section Routing
 - 使用 Pydantic Schema 约束字段类型和缺失值规则。
 - 将金额统一归一化为人民币元。
 - 用风险词频、权重和样本分位数替代单次 high/medium/low 主观标签。
-- 用分红压力、现金流压力、利润压力和流动性风险披露构建综合关注分数。
+- 用分红压力、现金流压力、利润压力和流动性风险披露构建 `base_attention_score`。
+- 将同公司跨年匹配事件转化为 `cross_year_pressure_score`，并进入最终 `attention_score`。
 
 ## 最终输出
 
@@ -80,7 +81,7 @@ metadata -> PDF 下载 -> 数据审计 -> MinerU 解析 -> Section Routing
 
 - 样本池扩展到 175 份 PDF。
 - 当前结构化样本包含 81 条已解析记录。
-- 形成 54 条同公司跨年匹配事件。
+- 形成 54 条同公司跨年匹配事件，并将跨年恶化信号纳入关注清单排序。
 - 不只做摘要，而是完成抽取、校验、单位归一化、量化评分和清单生成。
 - 将 `liquidity_risk_label` 和 `consistency_score` 的主观性问题改造为可比较的量化指标。
 

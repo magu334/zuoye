@@ -89,7 +89,7 @@ python pipeline_run.py --config configs/workflow_parsed81.yaml --step all
 
 旧版本的 `consistency_score` 解释性较弱。
 
-本版本新增 `attention_score`，由四个指标加权构成：
+本版本新增 `base_attention_score` 和最终 `attention_score`。其中 `base_attention_score` 由四个单年指标加权构成：
 
 | 指标 | 权重 |
 |---|---:|
@@ -98,7 +98,7 @@ python pipeline_run.py --config configs/workflow_parsed81.yaml --step all
 | 利润压力 | 20% |
 | 流动性风险披露 | 25% |
 
-综合评分生成 `attention_level` 和 `review_reason`，并输出人工复核清单。
+随后将同公司跨年匹配事件转化为 `cross_year_pressure_score`。若出现流动性风险分跳升、基础关注分跳升、分红上升但现金流下降、利润下降但仍分红等信号，则对目标年度加跨年压力分。最终 `attention_score = base_attention_score + 20% * cross_year_pressure_score`，上限为 100，并据此生成 `attention_level` 和 `review_reason`。
 
 ## 7. 当前结果
 
@@ -107,7 +107,7 @@ python pipeline_run.py --config configs/workflow_parsed81.yaml --step all
 - 81 条记录完成结构化校验。
 - `validation_errors.jsonl` 为空。
 - 81 条记录完成量化评分。
-- 4 条记录进入优先关注清单。
+- 7 条记录进入优先关注清单，其中部分记录因跨年压力从 monitor 提升到 watch。
 - 54 条同公司跨年匹配事件已生成。
 
 关键输出：

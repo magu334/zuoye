@@ -14,19 +14,29 @@ paths:
   validation_errors: outputs/logs/validation_errors.jsonl
   summary_report: outputs/reports/summary_report.md
   run_log: outputs/logs/run_log.jsonl
+  unit_normalized_results: records_validated_unit_normalized.csv
+  quantitative_scored_records: outputs/results/quantitative_scored_records.csv
+  quantitative_scored_jsonl: outputs/results/quantitative_scored_records.jsonl
+  attention_review_list: outputs/analysis/attention_review_list.csv
+  cross_year_events: outputs/analysis/cross_year_matching_events.csv
+  quantitative_report: outputs/reports/quantitative_attention_report.md
 
 steps:
   audit:
-    enabled: true
+    enabled: false
   parse:
-    enabled: true
+    enabled: false
+  parse_check:
+    enabled: false
   route:
-    enabled: true
+    enabled: false
     rules: configs/section_rules.yaml
   extract:
-    enabled: true
+    enabled: false
     method: rule
   validate:
     enabled: true
   report:
+    enabled: true
+  analysis:
     enabled: true

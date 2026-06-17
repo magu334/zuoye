@@ -109,7 +109,7 @@ PDF 上传策略：
 - [ ] `data/metadata/metadata.csv` 能追溯到巨潮公告 URL、PDF URL 和本地 PDF 路径。
 - [ ] PDF 样本或解析样本能与 metadata 对应。
 - [ ] `outputs/logs/sample_run_log.jsonl` 存在。
-- [ ] `outputs/results/final_results.csv` 存在，并包含 `liquidity_risk_score`、`attention_score`、`attention_level`。
+- [ ] `outputs/results/final_results.csv` 存在，并包含 `liquidity_risk_score`、`base_attention_score`、`cross_year_pressure_score`、`attention_score`、`attention_level`。
 - [ ] `outputs/reports/eval_report_final.md` 存在。
 - [ ] `final_report.md` 或 `final_report.pdf` 存在。
 - [ ] `demo_script.md` 存在。

@@ -188,7 +188,7 @@ PPT 重点：量化评分必须建立在统一量纲上。
 
 原问题：旧字段 `consistency_score` 只有简单分数，解释性和可比性不足。
 
-改进方式：改为多指标加权评分。
+改进方式：先构建单年基础关注分 `base_attention_score`，再引入同公司跨年压力分 `cross_year_pressure_score`，最终得到 `attention_score`。
 
 | 指标 | 权重 | 含义 |
 |---|---:|---|
@@ -203,20 +203,29 @@ PPT 重点：量化评分必须建立在统一量纲上。
 - `cashflow_pressure_score`
 - `profit_pressure_score`
 - `liquidity_risk_score`
+- `base_attention_score`
+- `cross_year_pressure_score`
+- `cross_year_pressure_level`
 - `attention_score`
 - `attention_level`
 
-PPT 重点：从主观标签升级为可解释、可比较、可排序的量化分数。
+最终公式：
+
+```text
+attention_score = base_attention_score + 20% * cross_year_pressure_score
+```
+
+PPT 重点：从主观标签升级为可解释、可比较、可排序的量化分数，并且让跨年恶化因素真正影响关注清单。
 
 ## 13. Step 10：生成值得关注的清单
 
-规则：将高综合关注分、现金分红但现金流弱、流动性风险披露强、利润承压等情况列入人工复核队列。
+规则：将高综合关注分、现金分红但现金流弱、流动性风险披露强、利润承压，以及跨年压力较高的情况列入人工复核队列。
 
 输出：
 
 - `outputs/analysis/attention_review_list.csv`
 
-当前结果：生成 4 条优先关注记录，供人工阅读年报原文进一步判断。
+当前结果：生成 7 条优先关注记录，其中部分记录因为跨年压力从 monitor 提升到 watch。
 
 ## 14. Step 11：跨年匹配事件
 
@@ -233,7 +242,7 @@ PPT 重点：从主观标签升级为可解释、可比较、可排序的量化�
 
 - `outputs/analysis/cross_year_matching_events.csv`
 
-当前结果：已形成 54 条同公司跨年匹配事件。
+当前结果：已形成 54 条同公司跨年匹配事件，并将跨年恶化信号转化为 `cross_year_pressure_score` 进入关注清单排序。
 
 ## 15. Step 12：评估与人工复核
 
@@ -263,10 +272,10 @@ python pipeline_run.py --config configs/workflow_parsed81.yaml --step all
 
 ```text
 [validate] valid=81, errors=0
-[report] summary report=outputs/reports/summary_report.md
 [analysis] scored_records=81
-[analysis] flagged_records=4
+[analysis] flagged_records=7
 [analysis] cross_year_events=54
+[report] summary report=outputs/reports/summary_report.md
 ```
 
 ## 17. 最终展示建议页序

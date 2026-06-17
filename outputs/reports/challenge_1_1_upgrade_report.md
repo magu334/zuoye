@@ -103,8 +103,8 @@ Latest verification:
 
 ```text
 [validate] valid=81, errors=0
-[report] summary report=outputs/reports/summary_report.md
 [analysis] scored_records=81
-[analysis] flagged_records=4
+[analysis] flagged_records=7
 [analysis] cross_year_events=54
+[report] summary report=outputs/reports/summary_report.md
 ```

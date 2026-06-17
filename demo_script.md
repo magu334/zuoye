@@ -50,10 +50,10 @@ Expected result:
 
 ```text
 [validate] valid=81, errors=0
-[report] summary report=outputs/reports/summary_report.md
 [analysis] scored_records=81
-[analysis] flagged_records=4
+[analysis] flagged_records=7
 [analysis] cross_year_events=54
+[report] summary report=outputs/reports/summary_report.md
 ```
 
 ### 5. Evidence And Structured Results
@@ -68,7 +68,7 @@ Explain:
 
 - The original extraction keeps dividend, profit, cash-flow, risk evidence, and old screening labels.
 - Unit normalization converts financial fields into comparable CNY columns.
-- Quantitative scoring adds `liquidity_risk_score`, `liquidity_risk_quantile`, `attention_score`, and `attention_level`.
+- Quantitative scoring adds `liquidity_risk_score`, `liquidity_risk_quantile`, `base_attention_score`, `cross_year_pressure_score`, final `attention_score`, and `attention_level`.
 
 ### 6. Cross-Year Matching
 
@@ -83,7 +83,9 @@ Explain one event row:
 - Operating cash-flow change.
 - Net-profit change.
 - Liquidity-risk score change.
-- Attention-score change.
+- Base-attention-score change.
+- Cross-year pressure score.
+- Final attention-score change.
 - Event type.
 
 ### 7. Review List
@@ -94,7 +96,7 @@ Open:
 
 Say:
 
-This is the final analyst review list. It is sorted by `attention_score`, a weighted 0-100 score, instead of relying only on subjective high/medium/low labels.
+This is the final analyst review list. It is sorted by final `attention_score`, which combines single-year pressure and same-company cross-year deterioration signals, instead of relying only on subjective high/medium/low labels.
 
 ### 8. Expansion Status And Caveat
 

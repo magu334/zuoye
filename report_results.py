@@ -65,7 +65,8 @@ def run(config: dict, limit: int | None = None) -> int:
             lines += [
                 "",
                 "## Attention Scores",
-                "- `attention_score` is weighted from dividend pressure, cash-flow pressure, profit pressure, and liquidity-risk score.",
+                "- `base_attention_score` is weighted from dividend pressure, cash-flow pressure, profit pressure, and liquidity-risk score.",
+                "- Final `attention_score` adds cross-year pressure from same-company matching events, so the review list is connected to cross-year deterioration signals.",
             ]
             for key in ["priority", "watch", "monitor", "routine", "missing"]:
                 if attention_counts.get(key, 0):

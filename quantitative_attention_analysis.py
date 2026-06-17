@@ -37,6 +37,10 @@ ANALYSIS_FIELDS = [
     "liquidity_risk_score",
     "liquidity_risk_quantile",
     "legacy_liquidity_risk_label",
+    "base_attention_score",
+    "cross_year_pressure_score",
+    "cross_year_pressure_level",
+    "cross_year_reason",
     "attention_score",
     "attention_level",
     "review_reason",
@@ -57,7 +61,9 @@ EVENT_FIELDS = [
     "ocf_delta_cny",
     "profit_delta_cny",
     "risk_score_delta",
-    "attention_score_delta",
+    "base_attention_score_delta",
+    "final_attention_score_delta",
+    "cross_year_pressure_score",
     "event_type",
     "review_reason",
 ]
@@ -226,6 +232,16 @@ def attention_level(score: float) -> str:
     return "routine"
 
 
+def cross_year_pressure_level(score: float) -> str:
+    if score >= 70:
+        return "high"
+    if score >= 40:
+        return "medium"
+    if score > 0:
+        return "low"
+    return "none"
+
+
 def build_reason(row: dict[str, object]) -> str:
     reasons: list[str] = []
     if row["has_cash_dividend"] == "True" and float(row["cashflow_pressure_score"]) >= 70:
@@ -234,9 +250,65 @@ def build_reason(row: dict[str, object]) -> str:
         reasons.append("net profit is negative")
     if float(row["liquidity_risk_score"]) >= 60:
         reasons.append("liquidity-risk term frequency is high")
+    cross_reason = str(row.get("cross_year_reason") or "").strip()
+    if cross_reason:
+        reasons.append(cross_reason)
     if row["has_cash_dividend"] == "":
         reasons.append("dividend field is missing")
     return "; ".join(reasons) or "routine review"
+
+
+def cross_year_pressure(left: dict[str, object], right: dict[str, object]) -> tuple[float, list[str]]:
+    reasons: list[str] = []
+    pressure = 0.0
+    left_div = to_float(left.get("cash_dividend_per_10_shares"))
+    right_div = to_float(right.get("cash_dividend_per_10_shares"))
+    left_ocf = to_float(left.get("operating_cash_flow_cny"))
+    right_ocf = to_float(right.get("operating_cash_flow_cny"))
+    left_profit = to_float(left.get("parent_net_profit_cny"))
+    right_profit = to_float(right.get("parent_net_profit_cny"))
+    left_risk = float(left["liquidity_risk_score"])
+    right_risk = float(right["liquidity_risk_score"])
+    left_base_attention = float(left["base_attention_score"])
+    right_base_attention = float(right["base_attention_score"])
+
+    dividend_delta = None if left_div is None or right_div is None else right_div - left_div
+    ocf_delta = None if left_ocf is None or right_ocf is None else right_ocf - left_ocf
+    profit_delta = None if left_profit is None or right_profit is None else right_profit - left_profit
+    risk_delta = right_risk - left_risk
+    base_attention_delta = right_base_attention - left_base_attention
+
+    if risk_delta >= 25:
+        pressure += 35
+        reasons.append("cross-year liquidity-risk score jumps")
+    elif risk_delta >= 15:
+        pressure += 20
+        reasons.append("cross-year liquidity-risk score rises")
+
+    if base_attention_delta >= 20:
+        pressure += 30
+        reasons.append("cross-year base attention score jumps")
+    elif base_attention_delta >= 10:
+        pressure += 15
+        reasons.append("cross-year base attention score rises")
+
+    if dividend_delta is not None and dividend_delta > 0 and ocf_delta is not None and ocf_delta < 0:
+        pressure += 25
+        reasons.append("dividend rises while operating cash flow declines")
+
+    if right_div and right_div > 0 and right_ocf is not None and right_ocf < 0:
+        pressure += 25
+        reasons.append("current-year dividend with negative operating cash flow")
+
+    if profit_delta is not None and profit_delta < 0 and right_div and right_div > 0:
+        pressure += 20
+        reasons.append("profit declines while dividend remains")
+
+    if right_profit is not None and right_profit < 0 and (profit_delta is None or profit_delta < 0):
+        pressure += 20
+        reasons.append("profit turns or remains negative")
+
+    return clamp(pressure), reasons
 
 
 def build_record_scores(rows: list[dict[str, str]], context: dict[str, dict[str, object]]) -> list[dict[str, object]]:
@@ -265,7 +337,7 @@ def build_record_scores(rows: list[dict[str, str]], context: dict[str, dict[str,
     for item in intermediate:
         row = item["row"]
         liquidity_score = 0.0 if max_weighted_hits <= 0 else clamp(float(item["weighted_hits"]) / max_weighted_hits * 100.0)
-        attention = clamp(
+        base_attention = clamp(
             0.30 * float(item["dividend_score"])
             + 0.25 * float(item["cashflow_score"])
             + 0.20 * float(item["profit_score"])
@@ -289,15 +361,53 @@ def build_record_scores(rows: list[dict[str, str]], context: dict[str, dict[str,
             "liquidity_risk_score": round(liquidity_score, 2),
             "liquidity_risk_quantile": "",
             "legacy_liquidity_risk_label": item["legacy_label"],
-            "attention_score": round(attention, 2),
-            "attention_level": attention_level(attention),
+            "base_attention_score": round(base_attention, 2),
+            "cross_year_pressure_score": 0.0,
+            "cross_year_pressure_level": "none",
+            "cross_year_reason": "",
+            "attention_score": round(base_attention, 2),
+            "attention_level": attention_level(base_attention),
             "review_reason": "",
         }
         result["review_reason"] = build_reason(result)
         scored.append(result)
 
     assign_quantile_labels(scored)
+    apply_cross_year_pressure(scored)
     return scored
+
+
+def apply_cross_year_pressure(scored: list[dict[str, object]]) -> None:
+    by_company: dict[str, list[dict[str, object]]] = defaultdict(list)
+    for row in scored:
+        by_company[str(row["stock_code"])].append(row)
+
+    for company_rows in by_company.values():
+        company_rows = sorted(company_rows, key=lambda item: int(str(item["report_year"])))
+        best_pressure_by_doc: dict[str, tuple[float, list[str]]] = {}
+        for index, right in enumerate(company_rows):
+            for left in company_rows[:index]:
+                year_gap = int(str(right["report_year"])) - int(str(left["report_year"]))
+                pressure, reasons = cross_year_pressure(left, right)
+                if year_gap == 1:
+                    pressure = clamp(pressure + 10 if pressure else 0)
+                else:
+                    pressure = round(pressure * 0.75, 2)
+                doc_id = str(right["doc_id"])
+                current_pressure, _ = best_pressure_by_doc.get(doc_id, (0.0, []))
+                if pressure > current_pressure:
+                    best_pressure_by_doc[doc_id] = (pressure, reasons)
+
+        for row in company_rows:
+            pressure, reasons = best_pressure_by_doc.get(str(row["doc_id"]), (0.0, []))
+            base_attention = float(row["base_attention_score"])
+            final_attention = clamp(base_attention + 0.20 * pressure)
+            row["cross_year_pressure_score"] = round(pressure, 2)
+            row["cross_year_pressure_level"] = cross_year_pressure_level(pressure)
+            row["cross_year_reason"] = "; ".join(dict.fromkeys(reasons))
+            row["attention_score"] = round(final_attention, 2)
+            row["attention_level"] = attention_level(final_attention)
+            row["review_reason"] = build_reason(row)
 
 
 def build_events(scored: list[dict[str, object]]) -> list[dict[str, object]]:
@@ -324,14 +434,18 @@ def build_event_row(stock_code: str, left: dict[str, object], right: dict[str, o
     right_profit = to_float(right.get("parent_net_profit_cny"))
     left_risk = float(left["liquidity_risk_score"])
     right_risk = float(right["liquidity_risk_score"])
-    left_attention = float(left["attention_score"])
-    right_attention = float(right["attention_score"])
+    left_base_attention = float(left["base_attention_score"])
+    right_base_attention = float(right["base_attention_score"])
+    left_final_attention = float(left["attention_score"])
+    right_final_attention = float(right["attention_score"])
 
     dividend_delta = None if left_div is None or right_div is None else right_div - left_div
     ocf_delta = None if left_ocf is None or right_ocf is None else right_ocf - left_ocf
     profit_delta = None if left_profit is None or right_profit is None else right_profit - left_profit
     risk_delta = right_risk - left_risk
-    attention_delta = right_attention - left_attention
+    base_attention_delta = right_base_attention - left_base_attention
+    final_attention_delta = right_final_attention - left_final_attention
+    cross_pressure, pressure_reasons = cross_year_pressure(left, right)
 
     if dividend_delta is not None and dividend_delta > 0 and (ocf_delta is not None and ocf_delta < 0):
         event_type.append("dividend_up_cashflow_down")
@@ -341,10 +455,16 @@ def build_event_row(stock_code: str, left: dict[str, object], right: dict[str, o
         event_type.append("dividend_with_profit_decline")
     if risk_delta >= 25:
         event_type.append("risk_score_jump")
-    if attention_delta >= 20:
+    if base_attention_delta >= 20:
         event_type.append("attention_score_jump")
+    if cross_pressure >= 70:
+        event_type.append("high_cross_year_pressure")
 
     year_gap = int(str(right["report_year"])) - int(str(left["report_year"]))
+    if year_gap == 1 and cross_pressure:
+        cross_pressure = clamp(cross_pressure + 10)
+    elif year_gap > 1:
+        cross_pressure = round(cross_pressure * 0.75, 2)
     return {
         "event_id": f"{stock_code}_{left['report_year']}_{right['report_year']}",
         "stock_code": stock_code,
@@ -359,15 +479,18 @@ def build_event_row(stock_code: str, left: dict[str, object], right: dict[str, o
         "ocf_delta_cny": "" if ocf_delta is None else round(ocf_delta, 2),
         "profit_delta_cny": "" if profit_delta is None else round(profit_delta, 2),
         "risk_score_delta": round(risk_delta, 2),
-        "attention_score_delta": round(attention_delta, 2),
+        "base_attention_score_delta": round(base_attention_delta, 2),
+        "final_attention_score_delta": round(final_attention_delta, 2),
+        "cross_year_pressure_score": round(cross_pressure, 2),
         "event_type": ";".join(event_type) or "baseline",
-        "review_reason": "; ".join(event_type) if event_type else "cross-year baseline comparison",
+        "review_reason": "; ".join(pressure_reasons or event_type) if (pressure_reasons or event_type) else "cross-year baseline comparison",
     }
 
 
 def report_lines(scored: list[dict[str, object]], events: list[dict[str, object]], flagged: list[dict[str, object]]) -> list[str]:
     levels = Counter(str(row["attention_level"]) for row in scored)
     risk_labels = Counter(str(row["liquidity_risk_quantile"]) for row in scored)
+    cross_pressure_labels = Counter(str(row.get("cross_year_pressure_level") or "missing") for row in scored)
     event_types = Counter()
     for event in events:
         for event_type in str(event["event_type"]).split(";"):
@@ -396,7 +519,9 @@ def report_lines(scored: list[dict[str, object]], events: list[dict[str, object]
         "## Quantitative Scoring",
         "- `liquidity_risk_score` is a normalized 0-100 score from weighted risk-term frequency in the routed risk evidence plus extracted risk keywords.",
         "- `liquidity_risk_quantile` is assigned from the full-sample score distribution, so high/medium/low are comparable across documents in the same run.",
-        "- `attention_score` is a 0-100 weighted score: dividend pressure 30%, cash-flow pressure 25%, profit pressure 20%, liquidity-risk score 25%.",
+        "- `base_attention_score` is a 0-100 single-year weighted score: dividend pressure 30%, cash-flow pressure 25%, profit pressure 20%, liquidity-risk score 25%.",
+        "- `cross_year_pressure_score` is derived from same-company year-to-year signals such as risk-score jumps, base-attention jumps, dividend up while cash flow declines, and profit decline while dividends remain.",
+        "- Final `attention_score` is `base_attention_score + 20% * cross_year_pressure_score`, capped at 100, so cross-year deterioration directly affects the priority review list.",
         "- The priority review list is sorted by `attention_score` rather than by a single subjective label.",
         "",
         "## Liquidity Risk Quantiles",
@@ -406,6 +531,10 @@ def report_lines(scored: list[dict[str, object]], events: list[dict[str, object]
     lines += ["", "## Attention Levels"]
     for key in ["priority", "watch", "monitor", "routine"]:
         lines.append(f"- {key}: {levels.get(key, 0)}")
+    lines += ["", "## Cross-Year Pressure Levels"]
+    for key in ["high", "medium", "low", "none", "missing"]:
+        if cross_pressure_labels.get(key, 0):
+            lines.append(f"- {key}: {cross_pressure_labels[key]}")
     lines += ["", "## Cross-Year Event Types"]
     for key, value in event_types.most_common():
         lines.append(f"- {key}: {value}")

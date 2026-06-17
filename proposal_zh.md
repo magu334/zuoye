@@ -112,7 +112,7 @@ metadata -> PDF 下载 -> 数据审计 -> MinerU 解析 -> Section Routing
 
 旧字段 `consistency_score` 解释性较弱。
 
-本项目新增 `attention_score`，由四类指标加权构成：
+本项目新增 `base_attention_score` 和最终 `attention_score`。其中 `base_attention_score` 由四类单年指标加权构成：
 
 | 指标 | 权重 |
 |---|---:|
@@ -121,11 +121,11 @@ metadata -> PDF 下载 -> 数据审计 -> MinerU 解析 -> Section Routing
 | 利润压力 | 20% |
 | 流动性风险披露 | 25% |
 
-最终输出 `attention_level` 和 `review_reason`，用于形成值得关注的人工复核清单。
+项目再根据同公司跨年匹配结果生成 `cross_year_pressure_score`，例如风险评分跳升、基础关注分跳升、分红上升但现金流下降、利润下降但仍分红等。最终 `attention_score = base_attention_score + 20% * cross_year_pressure_score`，用于输出 `attention_level` 和 `review_reason`，形成值得关注的人工复核清单。
 
 ### 4. 跨年匹配
 
-项目对同一公司的不同年份记录进行匹配，生成 54 条跨年事件，用于观察风险披露和现金流表现的变化。这比单年、单文档抽取更符合 1.1 档的复杂度要求。
+项目对同一公司的不同年份记录进行匹配，生成 54 条跨年事件，用于观察风险披露和现金流表现的变化。跨年事件不只是单独展示，还会转化为跨年压力分并进入最终关注清单排序。这比单年、单文档抽取更符合 1.1 档的复杂度要求。
 
 ## 七、预期输出
 

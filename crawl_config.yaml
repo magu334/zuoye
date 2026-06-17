@@ -3,10 +3,12 @@ source: "CNINFO public announcements"
 announcement_type: "annual_report"
 industry_scope: "A-share real-estate listed companies"
 year_range:
+  - "2020"
   - "2021"
   - "2022"
   - "2023"
-target_records: 80
+  - "2024"
+target_records: 175
 metadata_output: "data/metadata/metadata.csv"
 pdf_dir: "data/pdf"
 rate_limit:
